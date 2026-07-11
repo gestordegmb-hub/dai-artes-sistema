@@ -117,7 +117,7 @@ function BudgetDetail() {
         </div>
       </div>
 
-      <div className="card-elevated p-10 print-page max-w-3xl mx-auto">
+      <div ref={pdfRef} className="card-elevated p-10 print-page max-w-3xl mx-auto">
         <div className="flex items-start justify-between border-b pb-6 mb-6">
           <div className="flex items-center gap-4">
             <div className="h-14 w-14 rounded-xl grid place-items-center gradient-hero">
