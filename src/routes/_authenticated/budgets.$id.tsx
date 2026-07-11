@@ -28,6 +28,7 @@ function BudgetDetail() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const cancelledRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -66,17 +67,26 @@ function BudgetDetail() {
 
   async function openPreview() {
     if (!pdfRef.current) return;
+    cancelledRef.current = false;
     setPreviewLoading(true);
     setPreviewError(null);
     const t = toast.loading("Gerando pré-visualização do PDF…");
     try {
       const worker = await pdfWorker();
       const blob: Blob = await worker.outputPdf("blob");
+      if (cancelledRef.current) {
+        toast.dismiss(t);
+        return;
+      }
       if (!blob || blob.size === 0) throw new Error("PDF gerado está vazio.");
       const url = URL.createObjectURL(blob);
       setPreviewUrl(url);
       toast.success("Pré-visualização pronta.", { id: t });
     } catch (e: any) {
+      if (cancelledRef.current) {
+        toast.dismiss(t);
+        return;
+      }
       const msg = e?.message ?? "Falha desconhecida ao gerar o PDF.";
       setPreviewError(msg);
       toast.error("Erro ao gerar pré-visualização: " + msg, { id: t });
@@ -84,6 +94,14 @@ function BudgetDetail() {
       setPreviewLoading(false);
     }
   }
+
+  function cancelPreview() {
+    cancelledRef.current = true;
+    setPreviewLoading(false);
+    setPreviewError(null);
+    toast.message("Pré-visualização cancelada.");
+  }
+
 
   function closePreview() {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -336,6 +354,7 @@ function BudgetDetail() {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <div className="text-sm font-medium">Gerando pré-visualização…</div>
             <div className="text-xs text-muted-foreground text-center">Renderizando o orçamento em PDF. Isso leva alguns segundos.</div>
+            <button onClick={cancelPreview} className="mt-2 inline-flex items-center gap-2 h-9 px-4 rounded-md border text-sm hover:bg-accent"><X className="h-4 w-4" /> Cancelar</button>
           </div>
         </div>
       )}
