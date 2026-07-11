@@ -25,26 +25,62 @@ function BudgetDetail() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const pdfRef = useRef<HTMLDivElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
-  async function downloadPdf() {
-    if (!pdfRef.current) return;
-    const html2pdf = (await import("html2pdf.js")).default;
-    const filename = `orcamento-${String(budget.number).padStart(4, "0")}-${budget.client.name.replace(/\s+/g, "_")}.pdf`;
-    try {
-      await html2pdf()
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  function pdfFilename() {
+    return `orcamento-${String(budget.number).padStart(4, "0")}-${budget.client.name.replace(/\s+/g, "_")}.pdf`;
+  }
+
+  function pdfWorker() {
+    return import("html2pdf.js").then(({ default: html2pdf }) =>
+      html2pdf()
         .set({
           margin: 0,
-          filename,
+          filename: pdfFilename(),
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", windowWidth: 794 },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
         } as any)
-        .from(pdfRef.current)
-        .save();
+        .from(pdfRef.current!),
+    );
+  }
+
+  async function downloadPdf() {
+    if (!pdfRef.current) return;
+    try {
+      const worker = await pdfWorker();
+      await worker.save();
       toast.success("PDF baixado.");
     } catch (e: any) {
       toast.error("Erro ao gerar PDF: " + (e?.message ?? ""));
     }
+  }
+
+  async function openPreview() {
+    if (!pdfRef.current) return;
+    setPreviewLoading(true);
+    try {
+      const worker = await pdfWorker();
+      const blob: Blob = await worker.outputPdf("blob");
+      const url = URL.createObjectURL(blob);
+      setPreviewUrl(url);
+    } catch (e: any) {
+      toast.error("Erro ao gerar pré-visualização: " + (e?.message ?? ""));
+    } finally {
+      setPreviewLoading(false);
+    }
+  }
+
+  function closePreview() {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
   }
 
   async function updateStatus(status: string) {
