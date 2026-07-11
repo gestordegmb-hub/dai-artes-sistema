@@ -14,7 +14,227 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      budget_items: {
+        Row: {
+          budget_id: string
+          created_at: string
+          id: string
+          position: number
+          quantity: number
+          service_id: string | null
+          service_name: string
+          subtotal: number
+          unit_price: number
+        }
+        Insert: {
+          budget_id: string
+          created_at?: string
+          id?: string
+          position?: number
+          quantity?: number
+          service_id?: string | null
+          service_name: string
+          subtotal?: number
+          unit_price?: number
+        }
+        Update: {
+          budget_id?: string
+          created_at?: string
+          id?: string
+          position?: number
+          quantity?: number
+          service_id?: string | null
+          service_name?: string
+          subtotal?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_items_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budgets: {
+        Row: {
+          client_id: string
+          created_at: string
+          delivery_date: string | null
+          discount: number
+          id: string
+          notes: string | null
+          number: number
+          status: string
+          subtotal: number
+          surcharge: number
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          delivery_date?: string | null
+          discount?: number
+          id?: string
+          notes?: string | null
+          number: number
+          status?: string
+          subtotal?: number
+          surcharge?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          delivery_date?: string | null
+          discount?: number
+          id?: string
+          notes?: string | null
+          number?: number
+          status?: string
+          subtotal?: number
+          surcharge?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budgets_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          active: boolean
+          base_price: number
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          base_price?: number
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          base_price?: number
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      settings: {
+        Row: {
+          address: string | null
+          city: string | null
+          company_name: string
+          created_at: string
+          default_delivery_days: number
+          instagram: string | null
+          pdf_footer: string
+          phone: string | null
+          pix: string | null
+          updated_at: string
+          user_id: string
+          whatsapp: string | null
+          whatsapp_message_template: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          company_name?: string
+          created_at?: string
+          default_delivery_days?: number
+          instagram?: string | null
+          pdf_footer?: string
+          phone?: string | null
+          pix?: string | null
+          updated_at?: string
+          user_id: string
+          whatsapp?: string | null
+          whatsapp_message_template?: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          company_name?: string
+          created_at?: string
+          default_delivery_days?: number
+          instagram?: string | null
+          pdf_footer?: string
+          phone?: string | null
+          pix?: string | null
+          updated_at?: string
+          user_id?: string
+          whatsapp?: string | null
+          whatsapp_message_template?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
