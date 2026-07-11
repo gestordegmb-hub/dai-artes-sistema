@@ -329,6 +329,16 @@ function BudgetDetail() {
           <iframe title="Pré-visualização do PDF" src={previewUrl} className="flex-1 w-full bg-neutral-800" />
         </div>
       )}
+
+      {previewLoading && !previewUrl && (
+        <div className="no-print fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center" role="status" aria-live="polite">
+          <div className="bg-card rounded-xl shadow-xl px-8 py-6 flex flex-col items-center gap-3 min-w-[260px]">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="text-sm font-medium">Gerando pré-visualização…</div>
+            <div className="text-xs text-muted-foreground text-center">Renderizando o orçamento em PDF. Isso leva alguns segundos.</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
