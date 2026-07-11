@@ -1,7 +1,9 @@
 import { createFileRoute, Outlet, redirect, Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Sparkles, Plus } from "lucide-react";
+import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Sparkles, Plus, Beaker } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { isDemoUser } from "@/lib/demo-auth";
+
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -81,13 +83,21 @@ function Shell() {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="no-print h-16 border-b bg-card/70 backdrop-blur flex items-center justify-between px-4 md:px-8">
+        <header className="no-print h-16 border-b bg-card/70 backdrop-blur flex items-center justify-between px-4 md:px-8 gap-3">
           <div className="md:hidden font-display text-lg text-primary">Dai Artes</div>
           <div className="hidden md:block text-sm text-muted-foreground">Bem-vinda de volta ✨</div>
-          <Link to="/budgets/new" className="md:hidden inline-flex items-center gap-1 h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm">
-            <Plus className="h-4 w-4" />Novo
-          </Link>
+          <div className="flex items-center gap-2">
+            {isDemoUser(user?.email) && (
+              <span className="hidden sm:inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-primary-soft text-primary font-medium">
+                <Beaker className="h-3 w-3" /> Modo demo
+              </span>
+            )}
+            <Link to="/budgets/new" className="md:hidden inline-flex items-center gap-1 h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm">
+              <Plus className="h-4 w-4" />Novo
+            </Link>
+          </div>
         </header>
+
         <main className="flex-1 p-4 md:p-8 max-w-[1400px] w-full">
           <Outlet />
         </main>
