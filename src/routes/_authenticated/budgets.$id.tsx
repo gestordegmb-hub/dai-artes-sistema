@@ -301,6 +301,20 @@ function BudgetDetail() {
           </div>
         </div>
       </div>
+
+      {previewUrl && (
+        <div className="no-print fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex flex-col" role="dialog" aria-modal="true">
+          <div className="flex items-center justify-between px-4 py-3 bg-card/95 border-b">
+            <div className="text-sm font-medium">Pré-visualização — Orçamento #{String(budget.number).padStart(4, "0")}</div>
+            <div className="flex items-center gap-2">
+              <button onClick={downloadPdf} className="inline-flex items-center gap-2 h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"><Download className="h-4 w-4" /> Baixar</button>
+              <a href={previewUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 h-9 px-3 rounded-md border text-sm hover:bg-accent"><Printer className="h-4 w-4" /> Abrir e imprimir</a>
+              <button onClick={closePreview} className="inline-flex items-center gap-2 h-9 px-3 rounded-md border text-sm hover:bg-accent"><X className="h-4 w-4" /> Fechar</button>
+            </div>
+          </div>
+          <iframe title="Pré-visualização do PDF" src={previewUrl} className="flex-1 w-full bg-neutral-800" />
+        </div>
+      )}
     </div>
   );
 }
