@@ -1,7 +1,9 @@
 import { createFileRoute, Outlet, redirect, Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Sparkles, Plus } from "lucide-react";
+import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Sparkles, Plus, Beaker } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { isDemoUser } from "@/lib/demo-auth";
+
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
