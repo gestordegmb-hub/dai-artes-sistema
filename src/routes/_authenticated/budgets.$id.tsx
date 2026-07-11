@@ -66,13 +66,19 @@ function BudgetDetail() {
   async function openPreview() {
     if (!pdfRef.current) return;
     setPreviewLoading(true);
+    setPreviewError(null);
+    const t = toast.loading("Gerando pré-visualização do PDF…");
     try {
       const worker = await pdfWorker();
       const blob: Blob = await worker.outputPdf("blob");
+      if (!blob || blob.size === 0) throw new Error("PDF gerado está vazio.");
       const url = URL.createObjectURL(blob);
       setPreviewUrl(url);
+      toast.success("Pré-visualização pronta.", { id: t });
     } catch (e: any) {
-      toast.error("Erro ao gerar pré-visualização: " + (e?.message ?? ""));
+      const msg = e?.message ?? "Falha desconhecida ao gerar o PDF.";
+      setPreviewError(msg);
+      toast.error("Erro ao gerar pré-visualização: " + msg, { id: t });
     } finally {
       setPreviewLoading(false);
     }
