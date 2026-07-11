@@ -145,6 +145,7 @@ function BudgetDetail() {
             <option value="concluido">Concluído</option>
             <option value="recusado">Recusado</option>
           </select>
+          <button onClick={openPreview} disabled={previewLoading} className="inline-flex items-center gap-2 h-10 px-4 rounded-md border text-sm hover:bg-accent disabled:opacity-60">{previewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />} Pré-visualizar</button>
           <button onClick={downloadPdf} className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"><Download className="h-4 w-4" /> Baixar PDF</button>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 h-10 px-4 rounded-md border text-sm hover:bg-accent"><Printer className="h-4 w-4" /> Imprimir</button>
           <button onClick={share} className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-success text-success-foreground text-sm font-medium hover:opacity-90"><MessageCircle className="h-4 w-4" /> WhatsApp</button>
