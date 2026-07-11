@@ -354,6 +354,7 @@ function BudgetDetail() {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <div className="text-sm font-medium">Gerando pré-visualização…</div>
             <div className="text-xs text-muted-foreground text-center">Renderizando o orçamento em PDF. Isso leva alguns segundos.</div>
+            <button onClick={cancelPreview} className="mt-2 inline-flex items-center gap-2 h-9 px-4 rounded-md border text-sm hover:bg-accent"><X className="h-4 w-4" /> Cancelar</button>
           </div>
         </div>
       )}
