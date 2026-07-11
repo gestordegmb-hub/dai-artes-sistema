@@ -24,6 +24,28 @@ function BudgetDetail() {
   const { data: settings } = useSuspenseQuery(settingsQuery);
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const pdfRef = useRef<HTMLDivElement>(null);
+
+  async function downloadPdf() {
+    if (!pdfRef.current) return;
+    const html2pdf = (await import("html2pdf.js")).default;
+    const filename = `orcamento-${String(budget.number).padStart(4, "0")}-${budget.client.name.replace(/\s+/g, "_")}.pdf`;
+    try {
+      await html2pdf()
+        .set({
+          margin: 10,
+          filename,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        })
+        .from(pdfRef.current)
+        .save();
+      toast.success("PDF baixado.");
+    } catch (e: any) {
+      toast.error("Erro ao gerar PDF: " + (e?.message ?? ""));
+    }
+  }
 
   async function updateStatus(status: string) {
     const { error } = await supabase.from("budgets").update({ status }).eq("id", id);
