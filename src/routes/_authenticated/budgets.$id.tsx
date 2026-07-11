@@ -67,17 +67,26 @@ function BudgetDetail() {
 
   async function openPreview() {
     if (!pdfRef.current) return;
+    cancelledRef.current = false;
     setPreviewLoading(true);
     setPreviewError(null);
     const t = toast.loading("Gerando pré-visualização do PDF…");
     try {
       const worker = await pdfWorker();
       const blob: Blob = await worker.outputPdf("blob");
+      if (cancelledRef.current) {
+        toast.dismiss(t);
+        return;
+      }
       if (!blob || blob.size === 0) throw new Error("PDF gerado está vazio.");
       const url = URL.createObjectURL(blob);
       setPreviewUrl(url);
       toast.success("Pré-visualização pronta.", { id: t });
     } catch (e: any) {
+      if (cancelledRef.current) {
+        toast.dismiss(t);
+        return;
+      }
       const msg = e?.message ?? "Falha desconhecida ao gerar o PDF.";
       setPreviewError(msg);
       toast.error("Erro ao gerar pré-visualização: " + msg, { id: t });
@@ -85,6 +94,14 @@ function BudgetDetail() {
       setPreviewLoading(false);
     }
   }
+
+  function cancelPreview() {
+    cancelledRef.current = true;
+    setPreviewLoading(false);
+    setPreviewError(null);
+    toast.message("Pré-visualização cancelada.");
+  }
+
 
   function closePreview() {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
