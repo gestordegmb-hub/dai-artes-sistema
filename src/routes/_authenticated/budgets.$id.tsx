@@ -27,6 +27,7 @@ function BudgetDetail() {
   const pdfRef = useRef<HTMLDivElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
@@ -66,13 +67,19 @@ function BudgetDetail() {
   async function openPreview() {
     if (!pdfRef.current) return;
     setPreviewLoading(true);
+    setPreviewError(null);
+    const t = toast.loading("Gerando pré-visualização do PDF…");
     try {
       const worker = await pdfWorker();
       const blob: Blob = await worker.outputPdf("blob");
+      if (!blob || blob.size === 0) throw new Error("PDF gerado está vazio.");
       const url = URL.createObjectURL(blob);
       setPreviewUrl(url);
+      toast.success("Pré-visualização pronta.", { id: t });
     } catch (e: any) {
-      toast.error("Erro ao gerar pré-visualização: " + (e?.message ?? ""));
+      const msg = e?.message ?? "Falha desconhecida ao gerar o PDF.";
+      setPreviewError(msg);
+      toast.error("Erro ao gerar pré-visualização: " + msg, { id: t });
     } finally {
       setPreviewLoading(false);
     }
@@ -153,6 +160,13 @@ function BudgetDetail() {
           <button onClick={remove} className="inline-flex items-center gap-2 h-10 px-3 rounded-md border text-destructive hover:bg-destructive/10" title="Excluir"><Trash2 className="h-4 w-4" /></button>
         </div>
       </div>
+
+      {previewError && !previewLoading && !previewUrl && (
+        <div className="no-print rounded-md border border-destructive/40 bg-destructive/10 text-destructive px-4 py-3 text-sm flex items-center justify-between gap-3">
+          <span>Não foi possível gerar o PDF: {previewError}</span>
+          <button onClick={openPreview} className="inline-flex items-center gap-2 h-8 px-3 rounded-md border border-destructive/40 hover:bg-destructive/20 text-xs font-medium">Tentar novamente</button>
+        </div>
+      )}
 
       <div className="flex justify-center">
         <div ref={pdfRef} className="pdf-page shadow-[var(--shadow-card)]">
@@ -313,6 +327,16 @@ function BudgetDetail() {
             </div>
           </div>
           <iframe title="Pré-visualização do PDF" src={previewUrl} className="flex-1 w-full bg-neutral-800" />
+        </div>
+      )}
+
+      {previewLoading && !previewUrl && (
+        <div className="no-print fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center" role="status" aria-live="polite">
+          <div className="bg-card rounded-xl shadow-xl px-8 py-6 flex flex-col items-center gap-3 min-w-[260px]">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="text-sm font-medium">Gerando pré-visualização…</div>
+            <div className="text-xs text-muted-foreground text-center">Renderizando o orçamento em PDF. Isso leva alguns segundos.</div>
+          </div>
         </div>
       )}
     </div>
