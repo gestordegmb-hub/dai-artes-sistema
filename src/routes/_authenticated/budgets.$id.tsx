@@ -161,6 +161,13 @@ function BudgetDetail() {
         </div>
       </div>
 
+      {previewError && !previewLoading && !previewUrl && (
+        <div className="no-print rounded-md border border-destructive/40 bg-destructive/10 text-destructive px-4 py-3 text-sm flex items-center justify-between gap-3">
+          <span>Não foi possível gerar o PDF: {previewError}</span>
+          <button onClick={openPreview} className="inline-flex items-center gap-2 h-8 px-3 rounded-md border border-destructive/40 hover:bg-destructive/20 text-xs font-medium">Tentar novamente</button>
+        </div>
+      )}
+
       <div className="flex justify-center">
         <div ref={pdfRef} className="pdf-page shadow-[var(--shadow-card)]">
           {/* Decorative corner */}
