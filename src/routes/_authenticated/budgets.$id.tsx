@@ -28,6 +28,7 @@ function BudgetDetail() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const cancelledRef = useRef(false);
 
   useEffect(() => {
     return () => {
