@@ -195,6 +195,7 @@ export type Database = {
           created_at: string
           default_delivery_days: number
           instagram: string | null
+          logo_url: string | null
           pdf_footer: string
           phone: string | null
           pix: string | null
@@ -210,6 +211,7 @@ export type Database = {
           created_at?: string
           default_delivery_days?: number
           instagram?: string | null
+          logo_url?: string | null
           pdf_footer?: string
           phone?: string | null
           pix?: string | null
@@ -225,6 +227,7 @@ export type Database = {
           created_at?: string
           default_delivery_days?: number
           instagram?: string | null
+          logo_url?: string | null
           pdf_footer?: string
           phone?: string | null
           pix?: string | null

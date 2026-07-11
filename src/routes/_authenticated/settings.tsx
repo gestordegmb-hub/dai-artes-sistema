@@ -62,6 +62,13 @@ function SettingsPage() {
         <Field label="Cidade" k="city" />
         <Field label="PIX" k="pix" />
         <Field label="Endereço" k="address" full />
+        <Field label="URL da logo (aparece no PDF)" k="logo_url" full />
+        {form.logo_url && (
+          <div className="col-span-2 flex items-center gap-3 rounded-md border border-dashed p-3 bg-muted/30">
+            <img src={form.logo_url} alt="Prévia da logo" className="h-16 w-16 rounded-md object-contain bg-white" />
+            <span className="text-xs text-muted-foreground">Prévia — assim aparecerá no cabeçalho do PDF.</span>
+          </div>
+        )}
         <Field label="Prazo padrão (dias)" k="default_delivery_days" type="number" />
         <div />
         <Field label="Mensagem padrão do WhatsApp" k="whatsapp_message_template" textarea full />
