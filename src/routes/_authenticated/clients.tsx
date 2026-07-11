@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -71,7 +71,7 @@ function ClientsPage() {
               <tbody>
                 {filtered.map((c) => (
                   <tr key={c.id} className="border-b last:border-0 hover:bg-accent/30">
-                    <td className="p-4 font-medium">{c.name}</td>
+                    <td className="p-4 font-medium"><Link to="/clients/$id" params={{ id: c.id }} className="hover:text-primary">{c.name}</Link></td>
                     <td className="p-4 text-muted-foreground">{formatPhone(c.phone)}</td>
                     <td className="p-4 text-right space-x-1">
                       <button onClick={() => { setEditing(c); setOpen(true); }}

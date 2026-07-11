@@ -55,3 +55,18 @@ export const budgetDetailQuery = (id: string) =>
       return data;
     },
   });
+
+export const clientDetailQuery = (id: string) =>
+  queryOptions({
+    queryKey: ["client", id],
+    queryFn: async () => {
+      const [clientRes, budgetsRes] = await Promise.all([
+        supabase.from("clients").select("*").eq("id", id).single(),
+        supabase.from("budgets").select("*").eq("client_id", id).order("created_at", { ascending: false }),
+      ]);
+      if (clientRes.error) throw clientRes.error;
+      if (budgetsRes.error) throw budgetsRes.error;
+      return { client: clientRes.data, budgets: budgetsRes.data ?? [] };
+    },
+  });
+
