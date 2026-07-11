@@ -72,7 +72,7 @@ function NewBudgetPage() {
         surcharge: Number(surcharge.replace(",", ".") || 0),
         notes: notes.trim() || null,
         delivery_date: deliveryDate || null,
-        status: "pendente",
+        status: "pendente", number: 0,
       }).select().single();
       if (error) throw error;
       await supabase.from("budget_items").insert(items.map((it, idx) => ({

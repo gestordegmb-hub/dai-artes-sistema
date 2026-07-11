@@ -68,7 +68,7 @@ function BudgetsList() {
       user_id: userData.user!.id,
       client_id: original.client_id,
       subtotal: original.subtotal, discount: original.discount, surcharge: original.surcharge, total: original.total,
-      notes: original.notes, delivery_date: original.delivery_date, status: "pendente",
+      notes: original.notes, delivery_date: original.delivery_date, status: "pendente", number: 0,
     }).select().single();
     if (error) return toast.error(error.message);
     if (original.items?.length) {

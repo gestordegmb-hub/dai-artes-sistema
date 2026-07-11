@@ -45,7 +45,7 @@ function BudgetDetail() {
       user_id: userData.user!.id,
       client_id: budget.client_id,
       subtotal: budget.subtotal, discount: budget.discount, surcharge: budget.surcharge, total: budget.total,
-      notes: budget.notes, delivery_date: budget.delivery_date, status: "pendente",
+      notes: budget.notes, delivery_date: budget.delivery_date, status: "pendente", number: 0,
     }).select().single();
     if (error) return toast.error(error.message);
     await supabase.from("budget_items").insert(
