@@ -118,8 +118,21 @@ function AuthPage() {
               </>
             )}
           </div>
+
+          {preview && (
+            <div className="mt-8 pt-6 border-t">
+              <button onClick={enterDemo} disabled={loading}
+                className="w-full h-11 rounded-md border border-primary/40 text-primary text-sm font-medium hover:bg-primary-soft disabled:opacity-60">
+                ✨ Entrar no modo demo
+              </button>
+              <p className="mt-2 text-[11px] text-center text-muted-foreground">
+                Conta de demonstração: {DEMO_EMAIL}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
