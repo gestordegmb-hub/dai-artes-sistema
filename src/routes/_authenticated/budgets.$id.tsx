@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Printer, MessageCircle, Copy, Trash2, ArrowLeft, Sparkles, Download } from "lucide-react";
-import { useRef } from "react";
+import { Printer, MessageCircle, Copy, Trash2, ArrowLeft, Sparkles, Download, Eye, X, Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { budgetDetailQuery, settingsQuery } from "@/lib/queries";
 import { currency, formatDate, formatPhone } from "@/lib/format";
@@ -25,26 +25,62 @@ function BudgetDetail() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const pdfRef = useRef<HTMLDivElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
-  async function downloadPdf() {
-    if (!pdfRef.current) return;
-    const html2pdf = (await import("html2pdf.js")).default;
-    const filename = `orcamento-${String(budget.number).padStart(4, "0")}-${budget.client.name.replace(/\s+/g, "_")}.pdf`;
-    try {
-      await html2pdf()
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  function pdfFilename() {
+    return `orcamento-${String(budget.number).padStart(4, "0")}-${budget.client.name.replace(/\s+/g, "_")}.pdf`;
+  }
+
+  function pdfWorker() {
+    return import("html2pdf.js").then(({ default: html2pdf }) =>
+      html2pdf()
         .set({
           margin: 0,
-          filename,
+          filename: pdfFilename(),
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", windowWidth: 794 },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
         } as any)
-        .from(pdfRef.current)
-        .save();
+        .from(pdfRef.current!),
+    );
+  }
+
+  async function downloadPdf() {
+    if (!pdfRef.current) return;
+    try {
+      const worker = await pdfWorker();
+      await worker.save();
       toast.success("PDF baixado.");
     } catch (e: any) {
       toast.error("Erro ao gerar PDF: " + (e?.message ?? ""));
     }
+  }
+
+  async function openPreview() {
+    if (!pdfRef.current) return;
+    setPreviewLoading(true);
+    try {
+      const worker = await pdfWorker();
+      const blob: Blob = await worker.outputPdf("blob");
+      const url = URL.createObjectURL(blob);
+      setPreviewUrl(url);
+    } catch (e: any) {
+      toast.error("Erro ao gerar pré-visualização: " + (e?.message ?? ""));
+    } finally {
+      setPreviewLoading(false);
+    }
+  }
+
+  function closePreview() {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
   }
 
   async function updateStatus(status: string) {
@@ -109,6 +145,7 @@ function BudgetDetail() {
             <option value="concluido">Concluído</option>
             <option value="recusado">Recusado</option>
           </select>
+          <button onClick={openPreview} disabled={previewLoading} className="inline-flex items-center gap-2 h-10 px-4 rounded-md border text-sm hover:bg-accent disabled:opacity-60">{previewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />} Pré-visualizar</button>
           <button onClick={downloadPdf} className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"><Download className="h-4 w-4" /> Baixar PDF</button>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 h-10 px-4 rounded-md border text-sm hover:bg-accent"><Printer className="h-4 w-4" /> Imprimir</button>
           <button onClick={share} className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-success text-success-foreground text-sm font-medium hover:opacity-90"><MessageCircle className="h-4 w-4" /> WhatsApp</button>
@@ -264,6 +301,20 @@ function BudgetDetail() {
           </div>
         </div>
       </div>
+
+      {previewUrl && (
+        <div className="no-print fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex flex-col" role="dialog" aria-modal="true">
+          <div className="flex items-center justify-between px-4 py-3 bg-card/95 border-b">
+            <div className="text-sm font-medium">Pré-visualização — Orçamento #{String(budget.number).padStart(4, "0")}</div>
+            <div className="flex items-center gap-2">
+              <button onClick={downloadPdf} className="inline-flex items-center gap-2 h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"><Download className="h-4 w-4" /> Baixar</button>
+              <a href={previewUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 h-9 px-3 rounded-md border text-sm hover:bg-accent"><Printer className="h-4 w-4" /> Abrir e imprimir</a>
+              <button onClick={closePreview} className="inline-flex items-center gap-2 h-9 px-3 rounded-md border text-sm hover:bg-accent"><X className="h-4 w-4" /> Fechar</button>
+            </div>
+          </div>
+          <iframe title="Pré-visualização do PDF" src={previewUrl} className="flex-1 w-full bg-neutral-800" />
+        </div>
+      )}
     </div>
   );
 }
