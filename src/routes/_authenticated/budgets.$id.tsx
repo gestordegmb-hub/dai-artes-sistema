@@ -171,7 +171,7 @@ function BudgetDetail() {
                 <div className="text-[9px] uppercase tracking-[0.25em] pdf-accent font-semibold">Cliente</div>
                 <div className="font-display text-2xl mt-2">{budget.client.name}</div>
                 <div className="text-sm text-muted-foreground mt-1">{formatPhone(budget.client.phone)}</div>
-                {budget.client.email && <div className="text-sm text-muted-foreground">{budget.client.email}</div>}
+                {(budget.client as any).email && <div className="text-sm text-muted-foreground">{(budget.client as any).email}</div>}
               </div>
               <div className="rounded-xl border pdf-hairline p-5 grid grid-cols-2 gap-3">
                 <div>
