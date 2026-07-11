@@ -117,80 +117,151 @@ function BudgetDetail() {
         </div>
       </div>
 
-      <div ref={pdfRef} className="card-elevated p-10 print-page max-w-3xl mx-auto">
-        <div className="flex items-start justify-between border-b pb-6 mb-6">
-          <div className="flex items-center gap-4">
-            <div className="h-14 w-14 rounded-xl grid place-items-center gradient-hero">
-              <Sparkles className="h-6 w-6 text-primary-foreground" />
+      <div className="flex justify-center">
+        <div ref={pdfRef} className="pdf-page shadow-[var(--shadow-card)]">
+          {/* Decorative corner */}
+          <div aria-hidden className="absolute -top-24 -right-24 h-64 w-64 rounded-full opacity-20 pdf-band" />
+          <div aria-hidden className="absolute -bottom-32 -left-24 h-72 w-72 rounded-full opacity-10 pdf-band" />
+
+          {/* HEADER BAND */}
+          <div className="pdf-band px-12 py-8 flex items-start justify-between relative">
+            <div className="flex items-center gap-4">
+              {settings?.logo_url ? (
+                <div className="h-20 w-20 rounded-2xl bg-white p-2 shadow-lg">
+                  <img src={settings.logo_url} alt={settings?.company_name || "Logo"} crossOrigin="anonymous" className="h-full w-full object-contain" />
+                </div>
+              ) : (
+                <div className="h-20 w-20 rounded-2xl bg-white/15 backdrop-blur grid place-items-center border border-white/25">
+                  <Sparkles className="h-9 w-9 text-white" />
+                </div>
+              )}
+              <div>
+                <div className="font-display text-4xl leading-tight tracking-tight">{settings?.company_name || "Dai Artes"}</div>
+                <div className="text-[11px] uppercase tracking-[0.3em] text-white/80 mt-1">Papelaria personalizada</div>
+              </div>
             </div>
-            <div>
-              <div className="font-display text-3xl text-primary">{settings?.company_name || "Dai Artes"}</div>
-              <div className="text-xs text-muted-foreground mt-1">
-                {settings?.phone && <>{formatPhone(settings.phone)} · </>}
+            <div className="text-right">
+              <div className="text-[10px] uppercase tracking-[0.25em] text-white/75">Orçamento nº</div>
+              <div className="font-display text-4xl mt-1">#{String(budget.number).padStart(4, "0")}</div>
+              <div className="text-xs text-white/85 mt-2">Emitido em {formatDate(budget.created_at)}</div>
+            </div>
+          </div>
+
+          {/* CONTACT STRIP */}
+          <div className="pdf-soft-bg border-b pdf-hairline px-12 py-3 grid grid-cols-4 gap-3 text-[11px]">
+            {settings?.phone && (
+              <div><div className="text-[9px] uppercase tracking-widest text-muted-foreground">Telefone</div><div className="font-medium">{formatPhone(settings.phone)}</div></div>
+            )}
+            {settings?.whatsapp && (
+              <div><div className="text-[9px] uppercase tracking-widest text-muted-foreground">WhatsApp</div><div className="font-medium">{formatPhone(settings.whatsapp)}</div></div>
+            )}
+            {settings?.instagram && (
+              <div><div className="text-[9px] uppercase tracking-widest text-muted-foreground">Instagram</div><div className="font-medium">{settings.instagram}</div></div>
+            )}
+            {settings?.city && (
+              <div><div className="text-[9px] uppercase tracking-widest text-muted-foreground">Localização</div><div className="font-medium">{settings.city}</div></div>
+            )}
+          </div>
+
+          {/* BODY */}
+          <div className="px-12 py-8 relative">
+            {/* Client + delivery */}
+            <div className="grid grid-cols-2 gap-6 mb-8">
+              <div className="rounded-xl border pdf-hairline pdf-soft-bg p-5">
+                <div className="text-[9px] uppercase tracking-[0.25em] pdf-accent font-semibold">Cliente</div>
+                <div className="font-display text-2xl mt-2">{budget.client.name}</div>
+                <div className="text-sm text-muted-foreground mt-1">{formatPhone(budget.client.phone)}</div>
+                {budget.client.email && <div className="text-sm text-muted-foreground">{budget.client.email}</div>}
+              </div>
+              <div className="rounded-xl border pdf-hairline p-5 grid grid-cols-2 gap-3">
+                <div>
+                  <div className="text-[9px] uppercase tracking-[0.25em] pdf-accent font-semibold">Status</div>
+                  <div className="font-medium capitalize mt-1">{budget.status}</div>
+                </div>
+                {budget.delivery_date && (
+                  <div>
+                    <div className="text-[9px] uppercase tracking-[0.25em] pdf-accent font-semibold">Entrega prevista</div>
+                    <div className="font-medium mt-1">{formatDate(budget.delivery_date)}</div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Items */}
+            <div className="mb-6">
+              <div className="text-[9px] uppercase tracking-[0.25em] pdf-accent font-semibold mb-2">Itens do orçamento</div>
+              <table className="w-full text-sm pdf-table rounded-lg overflow-hidden">
+                <thead>
+                  <tr>
+                    <th className="text-left py-3 px-4">Serviço</th>
+                    <th className="text-center py-3 px-2 w-16">Qtd</th>
+                    <th className="text-right py-3 px-2 w-28">Valor unit.</th>
+                    <th className="text-right py-3 px-4 w-32">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(budget.items as any[]).map((it) => (
+                    <tr key={it.id}>
+                      <td className="py-3 px-4">{it.service_name}</td>
+                      <td className="py-3 px-2 text-center">{Number(it.quantity)}</td>
+                      <td className="py-3 px-2 text-right">{currency(it.unit_price)}</td>
+                      <td className="py-3 px-4 text-right font-medium">{currency(it.subtotal)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Totals + Pix */}
+            <div className="grid grid-cols-5 gap-6 mb-8">
+              <div className="col-span-3">
+                {settings?.pix && (
+                  <div className="rounded-xl border pdf-hairline p-5 pdf-soft-bg h-full">
+                    <div className="text-[9px] uppercase tracking-[0.25em] pdf-accent font-semibold">Pagamento via PIX</div>
+                    <div className="font-medium mt-2 break-all">{settings.pix}</div>
+                    <div className="text-xs text-muted-foreground mt-2">Envie o comprovante pelo WhatsApp para confirmarmos o pedido.</div>
+                  </div>
+                )}
+              </div>
+              <div className="col-span-2">
+                <div className="rounded-xl border pdf-hairline overflow-hidden">
+                  <div className="px-5 py-2 pdf-soft-bg text-[10px] uppercase tracking-widest text-muted-foreground">Resumo</div>
+                  <div className="p-5 space-y-2 text-sm">
+                    <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{currency(budget.subtotal)}</span></div>
+                    {Number(budget.discount) > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Desconto</span><span>- {currency(budget.discount)}</span></div>}
+                    {Number(budget.surcharge) > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Acréscimo</span><span>+ {currency(budget.surcharge)}</span></div>}
+                    <div className="pdf-band -mx-5 -mb-5 mt-3 px-5 py-3 flex justify-between items-baseline">
+                      <span className="text-xs uppercase tracking-widest text-white/80">Total</span>
+                      <span className="font-display text-2xl">{currency(budget.total)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            {budget.notes && (
+              <div className="rounded-xl border pdf-hairline p-5 mb-6">
+                <div className="text-[9px] uppercase tracking-[0.25em] pdf-accent font-semibold mb-2">Observações</div>
+                <div className="text-sm whitespace-pre-line leading-relaxed">{budget.notes}</div>
+              </div>
+            )}
+          </div>
+
+          {/* FOOTER */}
+          <div className="absolute bottom-0 left-0 right-0">
+            {settings?.address && (
+              <div className="text-center text-[10px] text-muted-foreground pb-2 px-12">{settings.address}{settings.city ? ` — ${settings.city}` : ""}</div>
+            )}
+            <div className="pdf-band px-12 py-4 flex items-center justify-between text-xs">
+              <div className="italic text-white/90">
+                {settings?.pdf_footer || "Obrigado pela preferência. Será um prazer produzir seus personalizados."}
+              </div>
+              <div className="text-white/80">
                 {settings?.instagram || "@daiartes"}
               </div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-xs uppercase tracking-widest text-muted-foreground">Orçamento</div>
-            <div className="font-display text-2xl">#{String(budget.number).padStart(4, "0")}</div>
-            <div className="text-xs text-muted-foreground mt-1">{formatDate(budget.created_at)}</div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6 mb-6">
-          <div>
-            <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Cliente</div>
-            <div className="font-medium">{budget.client.name}</div>
-            <div className="text-sm text-muted-foreground">{formatPhone(budget.client.phone)}</div>
-          </div>
-          {budget.delivery_date && (
-            <div className="text-right">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Entrega prevista</div>
-              <div className="font-medium">{formatDate(budget.delivery_date)}</div>
-            </div>
-          )}
-        </div>
-
-        <table className="w-full text-sm mb-6">
-          <thead>
-            <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground border-b">
-              <th className="py-2">Serviço</th>
-              <th className="py-2 text-center w-20">Qtd</th>
-              <th className="py-2 text-right w-28">Unit.</th>
-              <th className="py-2 text-right w-28">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(budget.items as any[]).map((it) => (
-              <tr key={it.id} className="border-b last:border-0">
-                <td className="py-3">{it.service_name}</td>
-                <td className="py-3 text-center">{Number(it.quantity)}</td>
-                <td className="py-3 text-right">{currency(it.unit_price)}</td>
-                <td className="py-3 text-right font-medium">{currency(it.subtotal)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="ml-auto max-w-xs space-y-1 text-sm">
-          <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{currency(budget.subtotal)}</span></div>
-          {Number(budget.discount) > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Desconto</span><span>- {currency(budget.discount)}</span></div>}
-          {Number(budget.surcharge) > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Acréscimo</span><span>+ {currency(budget.surcharge)}</span></div>}
-          <div className="flex justify-between border-t pt-2 mt-2 font-display text-xl">
-            <span>Total</span><span className="text-primary">{currency(budget.total)}</span>
-          </div>
-        </div>
-
-        {budget.notes && (
-          <div className="mt-8 border-t pt-4">
-            <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Observações</div>
-            <div className="text-sm whitespace-pre-line">{budget.notes}</div>
-          </div>
-        )}
-
-        <div className="mt-10 pt-6 border-t text-center text-sm italic text-muted-foreground">
-          {settings?.pdf_footer || "Obrigado pela preferência. Será um prazer produzir seus personalizados."}
         </div>
       </div>
     </div>
