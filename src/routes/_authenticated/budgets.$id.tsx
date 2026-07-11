@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Printer, MessageCircle, Copy, Trash2, ArrowLeft, Sparkles, Download } from "lucide-react";
-import { useRef } from "react";
+import { Printer, MessageCircle, Copy, Trash2, ArrowLeft, Sparkles, Download, Eye, X, Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { budgetDetailQuery, settingsQuery } from "@/lib/queries";
 import { currency, formatDate, formatPhone } from "@/lib/format";
