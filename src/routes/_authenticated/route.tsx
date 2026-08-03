@@ -1,8 +1,9 @@
 import { createFileRoute, Outlet, redirect, Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Sparkles, Plus, Beaker } from "lucide-react";
+import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Plus, Beaker } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { isDemoUser } from "@/lib/demo-auth";
+import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
 
 
 export const Route = createFileRoute("/_authenticated")({
@@ -40,8 +41,8 @@ function Shell() {
     <div className="min-h-screen flex bg-background">
       <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
         <div className="h-16 flex items-center gap-2 px-5 border-b border-sidebar-border">
-          <div className="h-9 w-9 rounded-lg grid place-items-center gradient-hero">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
+          <div className="h-9 w-9 rounded-lg grid place-items-center bg-white p-1 shadow-sm">
+            <img src={logoAsset.url} alt="Dai Artes" className="h-full w-full object-contain" />
           </div>
           <div>
             <div className="font-display text-lg leading-none text-sidebar-foreground">Dai Artes</div>
