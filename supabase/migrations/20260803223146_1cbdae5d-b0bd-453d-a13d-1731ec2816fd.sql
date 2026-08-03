@@ -1,0 +1,1 @@
+UPDATE public.settings SET logo_url = '/__l5e/assets-v1/a10257c1-5a78-44f3-a457-dc932673a158/logo-dai-artes.png' WHERE user_id = '00000000-0000-0000-0000-000000000dae';
