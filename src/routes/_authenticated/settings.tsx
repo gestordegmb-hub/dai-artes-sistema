@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { settingsQuery } from "@/lib/queries";
+import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   loader: ({ context }) => context.queryClient.ensureQueryData(settingsQuery),
@@ -63,12 +64,19 @@ function SettingsPage() {
         <Field label="PIX" k="pix" />
         <Field label="Endereço" k="address" full />
         <Field label="URL da logo (aparece no PDF)" k="logo_url" full />
-        {form.logo_url && (
-          <div className="col-span-2 flex items-center gap-3 rounded-md border border-dashed p-3 bg-muted/30">
-            <img src={form.logo_url} alt="Prévia da logo" className="h-16 w-16 rounded-md object-contain bg-white" />
-            <span className="text-xs text-muted-foreground">Prévia — assim aparecerá no cabeçalho do PDF.</span>
+        <div className="col-span-2 flex items-center justify-between rounded-md border border-dashed p-3 bg-muted/30">
+          <div className="flex items-center gap-3">
+            <img src={form.logo_url || logoAsset.url} alt="Prévia da logo" className="h-16 w-16 rounded-md object-contain bg-white" />
+            <span className="text-xs text-muted-foreground">Prévia — assim aparecerá no cabeçalho do PDF. Deixe o campo acima vazio para usar a logo padrão.</span>
           </div>
-        )}
+          <button
+            type="button"
+            onClick={() => set("logo_url", logoAsset.url)}
+            className="h-8 px-3 rounded-md border text-xs font-medium hover:bg-accent"
+          >
+            Restaurar padrão
+          </button>
+        </div>
         <Field label="Prazo padrão (dias)" k="default_delivery_days" type="number" />
         <div />
         <Field label="Mensagem padrão do WhatsApp" k="whatsapp_message_template" textarea full />
