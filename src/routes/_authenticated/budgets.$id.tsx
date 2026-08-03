@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { budgetDetailQuery, settingsQuery } from "@/lib/queries";
 import { currency, formatDate, formatPhone } from "@/lib/format";
 import { buildWhatsAppMessage, whatsappLink } from "@/lib/whatsapp";
+import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
 
 export const Route = createFileRoute("/_authenticated/budgets/$id")({
   loader: ({ context, params }) => Promise.all([
