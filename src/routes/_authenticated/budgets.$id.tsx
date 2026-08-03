@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { budgetDetailQuery, settingsQuery } from "@/lib/queries";
 import { currency, formatDate, formatPhone } from "@/lib/format";
 import { buildWhatsAppMessage, whatsappLink } from "@/lib/whatsapp";
+import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
 
 export const Route = createFileRoute("/_authenticated/budgets/$id")({
   loader: ({ context, params }) => Promise.all([
@@ -200,8 +201,8 @@ function BudgetDetail() {
                   <img src={settings.logo_url} alt={settings?.company_name || "Logo"} crossOrigin="anonymous" className="h-full w-full object-contain" />
                 </div>
               ) : (
-                <div className="h-20 w-20 rounded-2xl bg-white/15 backdrop-blur grid place-items-center border border-white/25">
-                  <Sparkles className="h-9 w-9 text-white" />
+                <div className="h-20 w-20 rounded-2xl bg-white p-2 shadow-lg">
+                  <img src={logoAsset.url} alt={settings?.company_name || "Logo"} crossOrigin="anonymous" className="h-full w-full object-contain" />
                 </div>
               )}
               <div>

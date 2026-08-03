@@ -1,9 +1,9 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DEMO_EMAIL, ensureDemoSession, isPreviewEnv } from "@/lib/demo-auth";
+import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -64,7 +64,7 @@ function AuthPage() {
     <div className="min-h-screen grid md:grid-cols-2">
       <div className="hidden md:flex flex-col justify-between p-12 gradient-hero">
         <div className="flex items-center gap-2 text-primary-foreground">
-          <Sparkles className="h-5 w-5" />
+          <img src={logoAsset.url} alt="Dai Artes" className="h-8 w-8 object-contain rounded-md bg-white p-0.5" />
           <span className="font-semibold tracking-wide">DAI ARTES</span>
         </div>
         <div>
@@ -81,7 +81,7 @@ function AuthPage() {
       <div className="flex items-center justify-center p-6 md:p-12 bg-background">
         <div className="w-full max-w-sm">
           <div className="md:hidden mb-6 flex items-center gap-2 text-primary">
-            <Sparkles className="h-5 w-5" /><span className="font-semibold">DAI ARTES</span>
+            <img src={logoAsset.url} alt="Dai Artes" className="h-8 w-8 object-contain rounded-md bg-white p-0.5 border border-primary/10" /><span className="font-semibold">DAI ARTES</span>
           </div>
           <h2 className="font-display text-3xl text-foreground">
             {mode === "signin" ? "Entrar" : "Criar conta"}
