@@ -197,12 +197,12 @@ function BudgetDetail() {
           <div className="pdf-band px-12 py-8 flex items-start justify-between relative">
             <div className="flex items-center gap-4">
               {settings?.logo_url ? (
-                <div className="h-20 w-20 rounded-2xl bg-white p-2 shadow-lg">
-                  <img src={settings.logo_url} alt={settings?.company_name || "Logo"} crossOrigin="anonymous" className="h-full w-full object-contain" />
+                <div className="h-20 w-20 rounded-2xl bg-white p-2 shadow-lg flex items-center justify-center">
+                  <img src={settings.logo_url} alt={settings?.company_name || "Logo"} crossOrigin="anonymous" className="max-h-full max-w-full object-contain block" />
                 </div>
               ) : (
-                <div className="h-20 w-20 rounded-2xl bg-white p-2 shadow-lg">
-                  <img src={logoAsset.url} alt={settings?.company_name || "Logo"} crossOrigin="anonymous" className="h-full w-full object-contain" />
+                <div className="h-20 w-20 rounded-2xl bg-white p-2 shadow-lg flex items-center justify-center">
+                  <img src={logoAsset.url} alt={settings?.company_name || "Logo"} crossOrigin="anonymous" className="max-h-full max-w-full object-contain block" />
                 </div>
               )}
               <div>
