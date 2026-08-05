@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Plus, Beaker } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { isDemoUser } from "@/lib/demo-auth";
+import { cleanupDemoData } from "@/lib/demo-cleanup.functions";
 import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
 
 
@@ -31,6 +32,14 @@ function Shell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   async function signOut() {
+    try {
+      if (isDemoUser(user?.email)) {
+        await cleanupDemoData({ data: { email: user!.email! } });
+      }
+    } catch (e) {
+      console.error("Failed to cleanup demo data", e);
+    }
+    
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
