@@ -12,8 +12,24 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
     context.queryClient.ensureQueryData(servicesQuery),
   ]),
   component: Dashboard,
-  errorComponent: ({ error }) => <div className="p-4 text-destructive">{error.message}</div>,
-  notFoundComponent: () => <div className="p-4">Nada por aqui.</div>,
+  errorComponent: ({ error, reset }) => (
+    <div className="card-elevated p-12 text-center space-y-4">
+      <div className="mx-auto w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+        <Receipt className="w-5 h-5 text-destructive" />
+      </div>
+      <h2 className="text-lg font-medium">Erro ao carregar dashboard</h2>
+      <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+        {error.message || "Não foi possível carregar os dados. Verifique sua conexão."}
+      </p>
+      <button 
+        onClick={() => reset()} 
+        className="h-9 px-4 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 active:scale-95 transition-all"
+      >
+        Tentar novamente
+      </button>
+    </div>
+  ),
+  notFoundComponent: () => <div className="card-elevated p-12 text-center text-muted-foreground">Conteúdo não encontrado.</div>,
 });
 
 function Dashboard() {
