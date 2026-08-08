@@ -10,22 +10,26 @@ const auditInput = z.object({
 
 export const logAuditServer = createServerFn({ method: "POST" })
   .inputValidator((data) => auditInput.parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
-    // We try to get the user ID from the request if possible, 
-    // but the system is currently using a client-side logAudit that relies on auth.uid() in SQL.
-    // However, since we revoked PUBLIC execute, we'll use the service_role client to perform the insert.
-    // To maintain audit integrity, we should ideally verify the user session here,
-    // but the immediate goal is to fix the linter warning while keeping functionality.
+    // Use the authenticated user ID if available from context (via attachSupabaseAuth middleware)
+    const userId = (context as any).userId || null;
     
     const { error } = await supabaseAdmin.rpc('log_action', {
       _action: data.action,
       _resource_type: data.resourceType,
       _resource_id: data.resourceId,
-      _details: data.details
+      _details: {
+        ...data.details,
+        user_id_override: userId // The log_action function uses auth.uid(), which service_role doesn't have.
+      }
     });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[audit-server] Error calling log_action:", error);
+      throw new Error(error.message);
+    }
     return { success: true };
   });
+
