@@ -30,7 +30,7 @@ function ServicesPage() {
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return services;
-    return services.filter((c) => c.name.toLowerCase().includes(s) || c.category.toLowerCase().includes(s));
+    return services.filter((c: any) => c.name.toLowerCase().includes(s) || c.category.toLowerCase().includes(s));
   }, [services, q]);
 
   async function remove(id: string) {
@@ -78,7 +78,7 @@ function ServicesPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((s) => (
+                {filtered.map((s: any) => (
                   <tr key={s.id} className="border-b last:border-0 hover:bg-accent/30">
                     <td className="p-4 font-medium">{s.name}</td>
                     <td className="p-4"><span className="text-xs px-2 py-0.5 rounded-full bg-primary-soft text-primary">{s.category}</span></td>

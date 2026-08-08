@@ -38,12 +38,12 @@ function NewBudgetPage() {
   });
   const [saving, setSaving] = useState(false);
 
-  const subtotal = useMemo(() => items.reduce((s, i) => s + (i.quantity * i.unit_price), 0), [items]);
+  const subtotal = useMemo(() => items.reduce((s: number, i: Item) => s + (i.quantity * i.unit_price), 0), [items]);
   const total = Math.max(0, subtotal - Number(discount.replace(",", ".") || 0) + Number(surcharge.replace(",", ".") || 0));
-  const client = clients.find((c) => c.id === clientId);
+  const client = clients.find((c: any) => c.id === clientId);
 
   function addItem(serviceId: string) {
-    const svc = services.find((s) => s.id === serviceId);
+    const svc = services.find((s: any) => s.id === serviceId);
     if (!svc) return;
     setItems((prev) => [...prev, {
       key: crypto.randomUUID(), service_id: svc.id, service_name: svc.name,
@@ -103,7 +103,7 @@ function NewBudgetPage() {
               <label className="text-sm font-medium">Cliente</label>
               <select value={clientId} onChange={(e) => setClientId(e.target.value)} className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm">
                 <option value="">Selecione…</option>
-                {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                {clients.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
               {clients.length === 0 && <p className="text-xs text-muted-foreground mt-1">Cadastre um cliente antes.</p>}
             </div>
@@ -121,7 +121,7 @@ function NewBudgetPage() {
               <select onChange={(e) => { if (e.target.value) { addItem(e.target.value); e.target.value = ""; } }}
                 className="h-9 rounded-md border border-input bg-card px-2 text-sm">
                 <option value="">+ Adicionar serviço</option>
-                {services.filter((s) => s.active).map((s) => <option key={s.id} value={s.id}>{s.name} — {currency(s.base_price)}</option>)}
+                {services.filter((s: any) => s.active).map((s: any) => <option key={s.id} value={s.id}>{s.name} — {currency(s.base_price)}</option>)}
               </select>
             </div>
 
