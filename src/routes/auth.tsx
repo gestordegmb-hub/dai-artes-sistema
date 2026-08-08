@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
-import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -45,7 +44,6 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Bem-vinda de volta!");
-        logAudit("login", "session");
         navigate({ to: "/dashboard" });
       }
     } catch (err: any) {

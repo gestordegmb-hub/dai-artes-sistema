@@ -35,9 +35,9 @@ function ClientDetailPage() {
   const [editing, setEditing] = useState(false);
 
   const stats = useMemo(() => {
-    const total = budgets.reduce((s: number, b: any) => s + Number(b.total), 0);
+    const total = budgets.reduce((s, b: any) => s + Number(b.total), 0);
     const approved = budgets.filter((b: any) => b.status === "aprovado" || b.status === "concluido");
-    const approvedTotal = approved.reduce((s: number, b: any) => s + Number(b.total), 0);
+    const approvedTotal = approved.reduce((s, b: any) => s + Number(b.total), 0);
     const last = budgets[0] as any;
     return { count: budgets.length, total, approvedTotal, approvedCount: approved.length, last };
   }, [budgets]);

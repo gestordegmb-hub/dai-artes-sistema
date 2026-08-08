@@ -6,7 +6,6 @@ import { Plus, Search, Trash2, Pencil, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { servicesQuery } from "@/lib/queries";
 import { currency } from "@/lib/format";
-import { logAudit } from "@/lib/audit";
 
 const CATEGORIES = [
   "Topo de Bolo", "Caixas Personalizadas", "Convites", "Lembranças",
@@ -30,7 +29,7 @@ function ServicesPage() {
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return services;
-    return services.filter((c: any) => c.name.toLowerCase().includes(s) || c.category.toLowerCase().includes(s));
+    return services.filter((c) => c.name.toLowerCase().includes(s) || c.category.toLowerCase().includes(s));
   }, [services, q]);
 
   async function remove(id: string) {
@@ -38,7 +37,6 @@ function ServicesPage() {
     const { error } = await supabase.from("services").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Serviço excluído.");
-    logAudit("delete", "service", id, { id });
     qc.invalidateQueries({ queryKey: ["services"] });
   }
 
@@ -78,7 +76,7 @@ function ServicesPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((s: any) => (
+                {filtered.map((s) => (
                   <tr key={s.id} className="border-b last:border-0 hover:bg-accent/30">
                     <td className="p-4 font-medium">{s.name}</td>
                     <td className="p-4"><span className="text-xs px-2 py-0.5 rounded-full bg-primary-soft text-primary">{s.category}</span></td>
@@ -130,7 +128,6 @@ function ServiceDialog({ service, onClose }: { service: any | null; onClose: () 
         : await supabase.from("services").insert(payload);
       if (res.error) throw res.error;
       toast.success(service ? "Serviço atualizado." : "Serviço cadastrado.");
-      logAudit(service ? "update" : "create", "service", service?.id || (res.data as any)?.[0]?.id, payload);
       qc.invalidateQueries({ queryKey: ["services"] });
       onClose();
     } catch (err: any) {

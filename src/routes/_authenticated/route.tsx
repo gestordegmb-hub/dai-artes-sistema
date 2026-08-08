@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Plus } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
-import { logAudit } from "@/lib/audit";
 
 
 export const Route = createFileRoute("/_authenticated")({
@@ -31,7 +30,6 @@ function Shell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   async function signOut() {
-    await logAudit("logout", "session");
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
