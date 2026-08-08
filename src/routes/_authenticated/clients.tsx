@@ -6,6 +6,7 @@ import { Plus, Search, Trash2, Pencil, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { clientsQuery } from "@/lib/queries";
 import { formatPhone, onlyDigits } from "@/lib/format";
+import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/clients")({
   loader: ({ context }) => context.queryClient.ensureQueryData(clientsQuery),
@@ -32,6 +33,7 @@ function ClientsPage() {
     const { error } = await supabase.from("clients").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Cliente excluído.");
+    logAudit("delete", "client", id, { id });
     qc.invalidateQueries({ queryKey: ["clients"] });
   }
 
@@ -114,6 +116,7 @@ function ClientDialog({ client, onClose }: { client: any | null; onClose: () => 
         : await supabase.from("clients").insert(payload);
       if (res.error) throw res.error;
       toast.success(client ? "Cliente atualizado." : "Cliente cadastrado.");
+      logAudit(client ? "update" : "create", "client", client?.id || (res.data as any)?.[0]?.id, payload);
       qc.invalidateQueries({ queryKey: ["clients"] });
       onClose();
     } catch (err: any) {

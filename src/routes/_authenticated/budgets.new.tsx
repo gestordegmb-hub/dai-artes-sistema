@@ -6,6 +6,7 @@ import { Plus, Trash2, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { clientsQuery, servicesQuery, settingsQuery } from "@/lib/queries";
 import { currency, formatDate } from "@/lib/format";
+import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/budgets/new")({
   loader: ({ context }) => Promise.all([
@@ -80,6 +81,7 @@ function NewBudgetPage() {
         quantity: it.quantity, unit_price: it.unit_price, subtotal: it.quantity * it.unit_price, position: idx,
       })));
       toast.success(`Orçamento #${String(budget.number).padStart(4, "0")} criado!`);
+      logAudit("create", "budget", budget.id, { total: budget.total, client_id: budget.client_id });
       navigate({ to: "/budgets/$id", params: { id: budget.id } });
     } catch (err: any) {
       toast.error(err.message);
