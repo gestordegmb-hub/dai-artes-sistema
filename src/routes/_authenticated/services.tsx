@@ -6,6 +6,7 @@ import { Plus, Search, Trash2, Pencil, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { servicesQuery } from "@/lib/queries";
 import { currency } from "@/lib/format";
+import { logAudit } from "@/lib/audit";
 
 const CATEGORIES = [
   "Topo de Bolo", "Caixas Personalizadas", "Convites", "Lembranças",
@@ -37,6 +38,7 @@ function ServicesPage() {
     const { error } = await supabase.from("services").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Serviço excluído.");
+    logAudit("delete", "service", id, { id });
     qc.invalidateQueries({ queryKey: ["services"] });
   }
 
@@ -128,6 +130,7 @@ function ServiceDialog({ service, onClose }: { service: any | null; onClose: () 
         : await supabase.from("services").insert(payload);
       if (res.error) throw res.error;
       toast.success(service ? "Serviço atualizado." : "Serviço cadastrado.");
+      logAudit(service ? "update" : "create", "service", service?.id || (res.data as any)?.[0]?.id, payload);
       qc.invalidateQueries({ queryKey: ["services"] });
       onClose();
     } catch (err: any) {
