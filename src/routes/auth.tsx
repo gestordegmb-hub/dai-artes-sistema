@@ -2,7 +2,6 @@ import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { DEMO_EMAIL, ensureDemoSession, isPreviewEnv } from "@/lib/demo-auth";
 import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
 
 export const Route = createFileRoute("/auth")({
@@ -10,8 +9,6 @@ export const Route = createFileRoute("/auth")({
   beforeLoad: async () => {
     const { data } = await supabase.auth.getSession();
     if (data.session) throw redirect({ to: "/dashboard" });
-    const ok = await ensureDemoSession();
-    if (ok) throw redirect({ to: "/dashboard" });
   },
   component: AuthPage,
 });
@@ -22,16 +19,12 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const preview = typeof window !== "undefined" && isPreviewEnv();
+  const preview = false;
 
   useEffect(() => { document.title = "Entrar — Dai Artes"; }, []);
 
   async function enterDemo() {
-    setLoading(true);
-    const ok = await ensureDemoSession();
-    setLoading(false);
-    if (ok) navigate({ to: "/dashboard" });
-    else toast.error("Não foi possível entrar no modo demo.");
+    // Demo disabled
   }
 
 
