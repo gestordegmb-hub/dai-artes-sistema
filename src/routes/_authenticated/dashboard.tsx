@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { budgetsQuery, clientsQuery, servicesQuery } from "@/lib/queries";
 import { currency, formatDate } from "@/lib/format";
-import { FileText, Users, Package, TrendingUp, CalendarDays, ArrowRight } from "lucide-react";
+import { FileText, Users, Package, TrendingUp, CalendarDays, ArrowRight, Receipt } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -40,16 +40,16 @@ function Dashboard() {
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  const todayBudgets = budgets.filter((b) => new Date(b.created_at) >= today);
-  const monthBudgets = budgets.filter((b) => new Date(b.created_at) >= monthStart);
-  const monthTotal = monthBudgets.reduce((s, b) => s + Number(b.total), 0);
+  const todayBudgets = budgets.filter((b: any) => new Date(b.created_at) >= today);
+  const monthBudgets = budgets.filter((b: any) => new Date(b.created_at) >= monthStart);
+  const monthTotal = monthBudgets.reduce((s: number, b: any) => s + Number(b.total), 0);
 
   // Chart: last 6 months
   const chartData = Array.from({ length: 6 }, (_, i) => {
     const d = new Date(today.getFullYear(), today.getMonth() - (5 - i), 1);
     const label = d.toLocaleDateString("pt-BR", { month: "short" });
     const end = new Date(d.getFullYear(), d.getMonth() + 1, 1);
-    const count = budgets.filter((b) => {
+    const count = budgets.filter((b: any) => {
       const bd = new Date(b.created_at);
       return bd >= d && bd < end;
     }).length;
@@ -61,7 +61,7 @@ function Dashboard() {
     { label: "Orçamentos no mês", value: monthBudgets.length, icon: FileText },
     { label: "Valor orçado no mês", value: currency(monthTotal), icon: TrendingUp },
     { label: "Clientes", value: clients.length, icon: Users },
-    { label: "Serviços ativos", value: services.filter((s) => s.active).length, icon: Package },
+    { label: "Serviços ativos", value: services.filter((s: any) => s.active).length, icon: Package },
   ];
 
   return (

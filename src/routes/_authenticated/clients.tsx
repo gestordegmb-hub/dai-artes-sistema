@@ -25,7 +25,7 @@ function ClientsPage() {
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return clients;
-    return clients.filter((c) => c.name.toLowerCase().includes(s) || onlyDigits(c.phone).includes(onlyDigits(s)));
+    return clients.filter((c: any) => c.name.toLowerCase().includes(s) || onlyDigits(c.phone).includes(onlyDigits(s)));
   }, [clients, q]);
 
   async function remove(id: string) {
@@ -71,7 +71,7 @@ function ClientsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((c) => (
+                {filtered.map((c: any) => (
                   <tr key={c.id} className="border-b last:border-0 hover:bg-accent/30">
                     <td className="p-4 font-medium"><Link to="/clients/$id" params={{ id: c.id }} className="hover:text-primary">{c.name}</Link></td>
                     <td className="p-4 text-muted-foreground">{formatPhone(c.phone)}</td>
