@@ -10,7 +10,7 @@ const auditInput = z.object({
 
 export const logAuditServer = createServerFn({ method: "POST" })
   .inputValidator((data) => auditInput.parse(data))
-  .handler(async ({ data, request }) => {
+  .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // We try to get the user ID from the request if possible, 
