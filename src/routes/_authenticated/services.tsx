@@ -9,7 +9,7 @@ import { currency } from "@/lib/format";
 
 const CATEGORIES = [
   "Topo de Bolo", "Caixas Personalizadas", "Convites", "Lembranças",
-  "Adesivos", "Canecas", "Sublimação", "Impressões", "Outros",
+  "Adesivos", "Canecas", "Sublimação", "Impressões", "Papelaria",
 ];
 
 export const Route = createFileRoute("/_authenticated/services")({
@@ -106,7 +106,7 @@ function ServicesPage() {
 function ServiceDialog({ service, onClose }: { service: any | null; onClose: () => void }) {
   const qc = useQueryClient();
   const [name, setName] = useState(service?.name || "");
-  const [category, setCategory] = useState(service?.category || "Outros");
+  const [category, setCategory] = useState(service?.category || "Papelaria");
   const [description, setDescription] = useState(service?.description || "");
   const [basePrice, setBasePrice] = useState(String(service?.base_price ?? ""));
   const [active, setActive] = useState(service?.active ?? true);
