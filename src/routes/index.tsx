@@ -15,7 +15,7 @@ function RootIndex() {
   return (
     <div className="min-h-screen bg-background p-8 font-sans">
       <div className="max-w-3xl mx-auto bg-card border rounded-xl shadow-sm p-8 prose prose-pink">
-        corrija qualquer erro de navegação, carregamento de imagens, e deixa todo layout organizado e premium
+        Padronizar o layout da página inicial para ficar 100% organizado e premium, com espaçamentos consistentes, hierarquia visual clara e componentes reutilizáveis.
       </div>
     </div>
   );
