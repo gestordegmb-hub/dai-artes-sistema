@@ -15,76 +15,54 @@ function RootIndex() {
   return (
     <div className="min-h-screen bg-background p-8 font-sans">
       <div className="max-w-3xl mx-auto bg-card border rounded-xl shadow-sm p-8 prose prose-pink">
-        <h1>Correção da Categoria "Outros"</h1>
+        <h1>Correção da Logo da Dai Artes na Versão Publicada</h1>
 
-        <p>A categoria <strong>"Outros"</strong> ainda continua aparecendo no formulário de criação de serviços.</p>
+        <p>Existe um problema na aplicação.</p>
 
-        <p>Não quero apenas alterar o texto visual. Quero remover completamente essa categoria do sistema.</p>
+        <p>No ambiente de <strong>Preview</strong> a logo da Dai Artes aparece normalmente.</p>
 
-        <h2>Faça uma busca em todo o projeto</h2>
+        <p>Porém, ao acessar o sistema pelo link público (Deploy), a logo não é exibida.</p>
 
-        <p>Localize onde a lista de categorias está sendo definida, podendo estar em:</p>
+        <p>Corrigir esse problema.</p>
 
-        <ul>
-          <li>Enum</li>
-          <li>Array</li>
-          <li>Seeders</li>
-          <li>Migration</li>
-          <li>Model</li>
-          <li>Controller</li>
-          <li>Componente React</li>
-          <li>Select do formulário</li>
-          <li>Constantes</li>
-          <li>Banco de dados</li>
-        </ul>
-
-        <p>Remova completamente a categoria:</p>
-
-        <p><strong>Outros</strong></p>
-
-        <p>e substitua por:</p>
-
-        <p><strong>Papelaria</strong></p>
-
-        <h2>Resultado esperado</h2>
-
-        <p>A lista de categorias deve ficar exatamente assim:</p>
+        <h2>Verificar</h2>
 
         <ul>
-          <li>Topo de Bolo</li>
-          <li>Caixas Personalizadas</li>
-          <li>Convites</li>
-          <li>Lembranças</li>
-          <li>Adesivos</li>
-          <li>Canecas</li>
-          <li>Sublimação</li>
-          <li>Impressões</li>
-          <li>Papelaria</li>
+          <li>O caminho (URL) da imagem da logo.</li>
+          <li>Se a imagem está sendo salva na pasta pública correta.</li>
+          <li>Se a imagem está sendo incluída no processo de build.</li>
+          <li>Se existe diferença entre Preview e Deploy.</li>
+          <li>Se o componente da logo está utilizando caminhos temporários (<code>blob:</code>, <code>localhost</code> ou URLs de preview).</li>
         </ul>
 
-        <hr />
+        <h2>Implementação</h2>
 
-        <h2>Banco de dados</h2>
+        <p>A logo deve ser carregada através de um caminho permanente e público.</p>
 
-        <p>Se existir algum serviço cadastrado com a categoria <strong>Outros</strong>, executar uma migração ou atualização automática para alterar esses registros para <strong>Papelaria</strong>, preservando todos os dados.</p>
+        <p>Caso seja utilizada uma pasta de assets, garantir que ela esteja disponível após o deploy.</p>
 
-        <hr />
+        <p>Se a logo estiver armazenada no banco de dados, verificar se a URL gerada é válida também na versão publicada.</p>
 
-        <h2>Interface</h2>
+        <h2>Responsividade</h2>
 
-        <p>Após a alteração:</p>
+        <p>A logo deve aparecer corretamente em:</p>
 
         <ul>
-          <li>O formulário <strong>Novo Serviço</strong> deve exibir apenas <strong>Papelaria</strong>.</li>
-          <li>A categoria <strong>Outros</strong> não deve aparecer em nenhum formulário, filtro, tabela ou tela do sistema.</li>
-          <li>Todos os filtros, pesquisas e listagens devem reconhecer a nova categoria <strong>Papelaria</strong>.</li>
+          <li>Tela de Login</li>
+          <li>Sidebar</li>
+          <li>Navbar</li>
+          <li>PDF (quando existir)</li>
+          <li>Impressão</li>
+          <li>Todas as páginas do sistema</li>
         </ul>
 
-        <hr />
+        <h2>Tratamento de Erros</h2>
+
+        <p>Caso a imagem não seja encontrada, exibir automaticamente uma logo padrão (placeholder) em vez de deixar um espaço vazio ou uma imagem quebrada.</p>
 
         <h2>Objetivo</h2>
 
-        <p>Garantir que <strong>Papelaria</strong> substitua completamente <strong>Outros</strong> em toda a aplicação, tanto na interface quanto no banco de dados, eliminando qualquer referência antiga à categoria "Outros".</p>
+        <p>Garantir que a identidade visual da Dai Artes seja exibida corretamente tanto no Preview quanto na versão publicada, utilizando uma URL permanente e válida após o deploy.</p>
       </div>
     </div>
   );
