@@ -1,0 +1,1 @@
+ALTER FUNCTION public.migrate_service_category() SET search_path = public;
