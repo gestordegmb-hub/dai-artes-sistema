@@ -15,83 +15,147 @@ function RootIndex() {
   return (
     <div className="min-h-screen bg-background p-8 font-sans">
       <div className="max-w-3xl mx-auto bg-card border rounded-xl shadow-sm p-8 prose prose-pink">
-        <h1>Correção dos Bugs do Sistema</h1>
+        <h1>Implementação do Sistema de Status dos Orçamentos</h1>
 
-        <p>Existem dois problemas críticos que precisam ser corrigidos.</p>
+        <p>Adicionar ao sistema um controle de status dos orçamentos para facilitar o acompanhamento de cada orçamento criado.</p>
 
-        <h2>Problema 1 - Geração de PDF</h2>
+        <h2>Status Inicial</h2>
 
-        <p>Ao clicar em <strong>Gerar PDF</strong>, ocorre um erro e o arquivo não é gerado.</p>
+        <p>Sempre que um novo orçamento for criado e salvo, ele deve receber automaticamente o status:</p>
 
-        <p>Verifique e corrija:</p>
+        <p><strong>🟡 Pendente</strong></p>
 
-        <ul>
-          <li>Configuração completa do DomPDF.</li>
-          <li>Rotas responsáveis pela geração do PDF.</li>
-          <li>Controller responsável pela exportação.</li>
-          <li>View Blade utilizada para o PDF.</li>
-          <li>Tratamento de exceções.</li>
-          <li>Garantir que todos os dados do orçamento sejam carregados corretamente.</li>
-          <li>Caso exista erro, exibir uma mensagem amigável ao usuário.</li>
-        </ul>
-
-        <p>O botão "Gerar PDF" deve baixar imediatamente um PDF profissional do orçamento.</p>
+        <p>Este será o status padrão de todos os novos orçamentos.</p>
 
         <hr />
 
-        <h2>Problema 2 - Login</h2>
+        <h2>Mudança Automática de Status</h2>
 
-        <p>O sistema está obrigando o usuário a criar uma conta toda vez que deseja entrar.</p>
-
-        <p>Isso não pode acontecer.</p>
-
-        <p>Corrigir completamente o sistema de autenticação.</p>
-
-        <p>Verificar:</p>
+        <p>Quando qualquer uma das ações abaixo for realizada pela primeira vez:</p>
 
         <ul>
-          <li>Persistência dos usuários no banco de dados.</li>
-          <li>Tabela <code>users</code>.</li>
-          <li>Configuração das migrations.</li>
-          <li>Laravel Breeze.</li>
-          <li>Middleware <code>auth</code>.</li>
-          <li>Sessões.</li>
-          <li>Cookies.</li>
-          <li>Configuração do <code>SESSION_DRIVER</code>.</li>
-          <li>Configuração do banco de dados.</li>
-          <li>Configuração do <code>.env</code>.</li>
+          <li>Compartilhar no WhatsApp</li>
+          <li>Gerar PDF</li>
+          <li>Imprimir orçamento</li>
         </ul>
 
-        <p>Após criar uma conta uma única vez, o usuário deve conseguir entrar utilizando apenas e-mail e senha, sem precisar realizar um novo cadastro ou uma nova confirmação de e-mail.</p>
+        <p>O sistema deve alterar automaticamente o status do orçamento para:</p>
 
-        <p>Caso o e-mail já exista, o sistema deve apenas autenticar o usuário.</p>
+        <p><strong>🟢 Aprovado</strong></p>
+
+        <p>Essa alteração deve ocorrer automaticamente, sem necessidade de confirmação do usuário.</p>
 
         <hr />
 
-        <h2>Persistência da sessão</h2>
-
-        <p>Depois do login:</p>
+        <h2>Regras</h2>
 
         <ul>
-          <li>Manter o usuário autenticado.</li>
-          <li>Não desconectar ao trocar de página.</li>
-          <li>Não exigir novo cadastro.</li>
-          <li>Implementar corretamente a opção "Lembrar-me".</li>
+          <li>Todo novo orçamento inicia como <strong>Pendente</strong>.</li>
+          <li>Após gerar PDF, o status muda para <strong>Aprovado</strong>.</li>
+          <li>Após imprimir, o status muda para <strong>Aprovado</strong>.</li>
+          <li>Após compartilhar pelo WhatsApp, o status muda para <strong>Aprovado</strong>.</li>
+          <li>Se o orçamento já estiver como <strong>Aprovado</strong>, nenhuma alteração adicional deve ser feita.</li>
+          <li>Registrar a data e hora em que o status foi alterado.</li>
+        </ul>
+
+        <hr />
+
+        <h2>Banco de Dados</h2>
+
+        <p>Adicionar na tabela <code>budgets</code> os seguintes campos:</p>
+
+        <ul>
+          <li><code>status</code></li>
+          <li><code>status_changed_at</code></li>
+        </ul>
+
+        <p>Valor padrão do campo <code>status</code>:</p>
+
+        <pre><code>pending</code></pre>
+
+        <p>Valores permitidos:</p>
+
+        <pre><code>pending
+approved</code></pre>
+
+        <hr />
+
+        <h2>Interface</h2>
+
+        <p>Na tabela de orçamentos, exibir um badge colorido indicando o status.</p>
+
+        <h3>Pendente</h3>
+
+        <ul>
+          <li>Cor: Amarelo</li>
+          <li>Ícone: ⏳</li>
+        </ul>
+
+        <p>Texto:</p>
+
+        <p><strong>Pendente</strong></p>
+
+        <h3>Aprovado</h3>
+
+        <ul>
+          <li>Cor: Verde</li>
+          <li>Ícone: ✔</li>
+        </ul>
+
+        <p>Texto:</p>
+
+        <p><strong>Aprovado</strong></p>
+
+        <hr />
+
+        <h2>Dashboard</h2>
+
+        <p>Adicionar dois novos cards:</p>
+
+        <p>🟡 Orçamentos Pendentes</p>
+
+        <p>🟢 Orçamentos Aprovados</p>
+
+        <p>Os números devem ser atualizados automaticamente.</p>
+
+        <hr />
+
+        <h2>Filtros</h2>
+
+        <p>Na página de Orçamentos, adicionar filtro por status:</p>
+
+        <ul>
+          <li>Todos</li>
+          <li>Pendentes</li>
+          <li>Aprovados</li>
+        </ul>
+
+        <p>Também permitir pesquisar combinando:</p>
+
+        <ul>
+          <li>Cliente</li>
+          <li>Data</li>
+          <li>Status</li>
+        </ul>
+
+        <hr />
+
+        <h2>Histórico</h2>
+
+        <p>Ao visualizar um orçamento, exibir:</p>
+
+        <ul>
+          <li>Data de criação</li>
+          <li>Status atual</li>
+          <li>Data da última alteração de status</li>
+          <li>Usuário responsável pelo orçamento</li>
         </ul>
 
         <hr />
 
         <h2>Objetivo</h2>
 
-        <p>Entregar um sistema estável onde:</p>
-
-        <ul>
-          <li>O cadastro do usuário acontece apenas uma vez.</li>
-          <li>O login funciona normalmente com e-mail e senha.</li>
-          <li>A sessão permanece ativa até o logout.</li>
-          <li>O botão "Gerar PDF" funciona corretamente sem apresentar erros.</li>
-          <li>Todos os erros sejam tratados de forma amigável, sem exibir exceções técnicas ao usuário.</li>
-        </ul>
+        <p>Criar um fluxo automático e inteligente, onde todos os orçamentos começam como <strong>Pendente</strong> e passam para <strong>Aprovado</strong> assim que forem efetivamente enviados ao cliente (WhatsApp), gerados em PDF ou impressos, permitindo um controle visual simples, profissional e eficiente de todos os orçamentos.</p>
       </div>
     </div>
   );
