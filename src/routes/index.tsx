@@ -15,7 +15,7 @@ function RootIndex() {
   return (
     <div className="min-h-screen bg-background p-8 font-sans">
       <div className="max-w-4xl mx-auto bg-card border rounded-xl shadow-sm p-8 prose prose-pink max-w-none">
-        <p>no mobile, adiciona menu de barras no canto no navbar, para facilitar a navegação e inclusive se o usuari quiser sair de uma conta para outra</p>
+        <p>Implementar um menu de barras no canto do navbar para facilitar a navegação no celular.</p>
       </div>
     </div>
   );
