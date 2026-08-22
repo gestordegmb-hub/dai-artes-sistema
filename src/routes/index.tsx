@@ -15,7 +15,7 @@ function RootIndex() {
   return (
     <div className="min-h-screen bg-background p-8 font-sans">
       <div className="max-w-4xl mx-auto bg-card border rounded-xl shadow-sm p-8 prose prose-pink max-w-none">
-        <p>adiciona essa imagem como a logo na seção de login</p>
+        <p>Create a reusable DaiArtesLogo component and use it across Login, Sidebar, Navbar, Dashboard, Profile, and Settings.</p>
       </div>
     </div>
   );
