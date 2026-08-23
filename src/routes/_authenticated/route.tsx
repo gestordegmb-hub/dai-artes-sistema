@@ -48,6 +48,11 @@ const NAV = [
   { to: "/settings", label: "Configurações", icon: Settings },
 ] as const;
 
+const ADMIN_NAV = [
+  { to: "/admin/users", label: "Administração", icon: Users },
+] as const;
+
+
 function Shell() {
   const { user } = Route.useRouteContext();
   const router = useRouter();
