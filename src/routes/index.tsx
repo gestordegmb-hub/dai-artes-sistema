@@ -38,6 +38,9 @@ function RootIndex() {
           <br />
           <br />
           Implemente paginação na lista de usuários do painel administrativo para melhorar a performance e a navegação.
+          <br />
+          <br />
+          todos os usuarios inativos devem ser excluido da tela de administração de usuarios
         </p>
       </div>
     </div>

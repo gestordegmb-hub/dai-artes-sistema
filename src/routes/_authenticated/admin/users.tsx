@@ -28,6 +28,7 @@ function AdminUsersPage() {
       const { data: profiles, error: pError } = await supabase
         .from("profiles")
         .select("*")
+        .eq("status", "active")
         .order("created_at", { ascending: false });
         
       if (pError) throw pError;
