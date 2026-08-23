@@ -14,25 +14,51 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot" | "reset">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const preview = false;
 
-  useEffect(() => { document.title = "Entrar — Dai Artes"; }, []);
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get("mode") === "reset" || window.location.hash.includes("type=recovery")) {
+      setMode("reset");
+    }
+  }, []);
 
-  async function enterDemo() {
-    // Demo disabled
-  }
-
+  useEffect(() => { 
+    const titles = {
+      signin: "Entrar — Dai Artes",
+      signup: "Criar conta — Dai Artes",
+      forgot: "Recuperar Senha — Dai Artes",
+      reset: "Definir Nova Senha — Dai Artes"
+    };
+    document.title = titles[mode]; 
+  }, [mode]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "signup") {
+      if (mode === "reset") {
+        if (password !== confirmPassword) {
+          throw new Error("As senhas não coincidem.");
+        }
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) throw error;
+        toast.success("Senha alterada com sucesso! Agora você pode entrar.");
+        setMode("signin");
+        navigate({ to: "/auth", replace: true });
+      } else if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth?mode=reset`,
+        });
+        if (error) throw error;
+        toast.success("Link de recuperação enviado para o seu e-mail!");
+        setMode("signin");
+      } else if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email, password,
           options: { emailRedirectTo: `${window.location.origin}/dashboard` },
@@ -52,6 +78,8 @@ function AuthPage() {
       setLoading(false);
     }
   }
+
+
 
   return (
     <div className="min-h-screen grid md:grid-cols-2">
@@ -77,31 +105,62 @@ function AuthPage() {
             <img src={logoAsset.url} alt="Dai Artes" className="h-8 w-8 object-contain rounded-md bg-white p-0.5 border border-primary/10" /><span className="font-semibold">DAI ARTES</span>
           </div>
           <h2 className="font-display text-3xl text-foreground">
-            {mode === "signin" ? "Entrar" : "Criar conta"}
+            {mode === "signin" ? "Entrar" : mode === "signup" ? "Criar conta" : mode === "forgot" ? "Recuperar senha" : "Nova senha"}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {mode === "signin" ? "Acesse sua conta para gerenciar orçamentos." : "Comece a organizar seus orçamentos agora."}
+            {mode === "signin" 
+              ? "Acesse sua conta para gerenciar orçamentos." 
+              : mode === "signup"
+                ? "Comece a organizar seus orçamentos agora."
+                : mode === "forgot"
+                  ? "Informe seu e-mail para receber o link de recuperação."
+                  : "Defina sua nova senha de acesso."}
           </p>
 
           <form onSubmit={submit} className="mt-8 space-y-4">
-            <div>
-              <label className="text-sm font-medium">E-mail</label>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Senha</label>
-              <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
-            </div>
+            {mode !== "reset" && (
+              <div>
+                <label className="text-sm font-medium">E-mail</label>
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+              </div>
+            )}
+            
+            {mode !== "forgot" && (
+              <>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">{mode === "reset" ? "Nova Senha" : "Senha"}</label>
+                    {mode === "signin" && (
+                      <button type="button" onClick={() => setMode("forgot")} className="text-xs text-primary hover:underline">
+                        Esqueceu a senha?
+                      </button>
+                    )}
+                  </div>
+                  <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
+                    className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+                </div>
+                
+                {mode === "reset" && (
+                  <div>
+                    <label className="text-sm font-medium">Confirmar Nova Senha</label>
+                    <input type="password" required minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+                  </div>
+                )}
+              </>
+            )}
+            
             <button type="submit" disabled={loading}
               className="w-full h-11 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 disabled:opacity-60 shadow-[var(--shadow-soft)]">
-              {loading ? "Aguarde…" : mode === "signin" ? "Entrar" : "Criar conta"}
+              {loading ? "Aguarde…" : mode === "signin" ? "Entrar" : mode === "signup" ? "Criar conta" : mode === "forgot" ? "Enviar link" : "Salvar Senha"}
             </button>
           </form>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            {mode === "signin" ? (
+            {mode === "reset" ? (
+              <button className="text-primary font-medium hover:underline" onClick={() => setMode("signin")}>Voltar para o login</button>
+            ) : mode === "signin" ? (
               <>Ainda não tem conta?{" "}
                 <button className="text-primary font-medium hover:underline" onClick={() => setMode("signup")}>Criar conta</button>
               </>
@@ -111,6 +170,8 @@ function AuthPage() {
               </>
             )}
           </div>
+
+
 
         </div>
       </div>
