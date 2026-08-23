@@ -15,45 +15,25 @@ export const Route = createFileRoute("/")({
 function RootIndex() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="max-w-md w-full text-center space-y-4">
-        <p className="text-muted-foreground break-all">
-          pablooliveirasantos184@gmail.com
-          <br />
-          adiciona essa conta como administrador para ter acesso a area de admin do sistema
-          <br />
-          <br />
-          usuarios desativados são excluidos automaticamente do acesso e da memoria de conta do sistema
-          <br />
-          <br />
-          todo novo usuario deve ter o acesso permitido pelo admin. caso ao contrario, não tera acesso no sistema.
-          <br />
-          <br />
-          Adicionar uma fila de aprovação para novos usuários no painel administrativo, para liberar o acesso apenas após validação.
-          <br />
-          <br />
-          Adicionar uma tela no admin para aprovar, rejeitar e desativar usuários, exibindo claramente o status de cada conta.
-          <br />
-          <br />
-          Adicionar busca instantânea e filtros por status e data na lista de usuários do painel administrativo.
-          <br />
-          <br />
-          Implemente paginação na lista de usuários do painel administrativo para melhorar a performance e a navegação.
-          <br />
-          <br />
-          todos os usuarios inativos devem ser excluido da tela de administração de usuarios
-          <br />
-          <br />
-          Criar uma página de perfil para eu alterar meus dados e trocar minha senha.
-          <br />
-          <br />
-          Load the security issues from the scan results and fix the selected issues.
-          <br />
-          <br />
-          Auditoria de segurança concluída: privilégios de execução restritos para funções sensíveis.
-          <br />
-          <br />
-          status de acesso do usuario em tempo real, se estiver online, o ultimo acesso tem que mostrar, se esteve online nas ultimas horas, minutos, segundos e dias
-        </p>
+      <div className="max-w-md w-full text-center space-y-6">
+        <div className="flex justify-center">
+          <div className="h-24 w-24 rounded-2xl bg-white p-3 shadow-xl border border-primary/10 overflow-hidden">
+            <img 
+              src="/images/logo-dai-artes.png" 
+              alt="Dai Artes Logo" 
+              className="h-full w-full object-contain"
+            />
+          </div>
+        </div>
+        <div>
+          <h1 className="font-display text-3xl text-primary">Dai Artes</h1>
+          <p className="text-muted-foreground mt-2 italic">Papelaria Personalizada</p>
+        </div>
+        <div className="pt-4 border-t border-border/40">
+          <p className="text-sm text-muted-foreground">
+            Redirecionando para o sistema...
+          </p>
+        </div>
       </div>
     </div>
   );
