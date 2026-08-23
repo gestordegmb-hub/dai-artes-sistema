@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { settingsQuery } from "@/lib/queries";
-import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
+import { DaiArtesLogo } from "@/components/DaiArtesLogo";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   loader: ({ context }) => context.queryClient.ensureQueryData(settingsQuery),
@@ -103,12 +103,16 @@ function SettingsPage() {
         <Field label="URL da logo (aparece no PDF)" k="logo_url" full />
         <div className="col-span-2 flex items-center justify-between rounded-md border border-dashed p-3 bg-muted/30">
           <div className="flex items-center gap-3">
-            <img src={form.logo_url || logoAsset.url} alt="Prévia da logo" className="h-16 w-16 rounded-md object-contain bg-white" />
+            {form.logo_url ? (
+              <img src={form.logo_url} alt="Prévia da logo" className="h-16 w-16 rounded-md object-contain bg-white" />
+            ) : (
+              <DaiArtesLogo className="h-16 w-16 rounded-md bg-white p-1" />
+            )}
             <span className="text-xs text-muted-foreground">Prévia — assim aparecerá no cabeçalho do PDF. Deixe o campo acima vazio para usar a logo padrão.</span>
           </div>
           <button
             type="button"
-            onClick={() => set("logo_url", logoAsset.url)}
+            onClick={() => set("logo_url", "")}
             className="h-8 px-3 rounded-md border text-xs font-medium hover:bg-accent"
           >
             Restaurar padrão
