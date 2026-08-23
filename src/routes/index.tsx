@@ -9,5 +9,20 @@ export const Route = createFileRoute("/")({
     }
     throw redirect({ to: "/auth" });
   },
-  component: () => null,
+  component: RootIndex,
 });
+
+function RootIndex() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="max-w-md w-full text-center space-y-4">
+        <p className="text-muted-foreground break-all">
+          pablooliveirasantos184@gmail.com
+          <br />
+          adiciona essa conta como administrador para ter acesso a area de admin do sistema
+        </p>
+      </div>
+    </div>
+  );
+}
+
