@@ -32,6 +32,9 @@ function RootIndex() {
           <br />
           <br />
           Adicionar uma tela no admin para aprovar, rejeitar e desativar usuários, exibindo claramente o status de cada conta.
+          <br />
+          <br />
+          Adicionar busca instantânea e filtros por status e data na lista de usuários do painel administrativo.
         </p>
       </div>
     </div>
