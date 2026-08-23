@@ -33,7 +33,7 @@ function AdminUsersPage() {
         .order("created_at", { ascending: false });
         
       if (error) throw error;
-      return profiles;
+      return profiles as any[];
     }
   });
 
@@ -80,6 +80,7 @@ function AdminUsersPage() {
   });
 
   const sendRecovery = async (email: string) => {
+    if (!email) return;
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth?mode=reset`,
     });
@@ -109,8 +110,8 @@ function AdminUsersPage() {
           </TableHeader>
           <TableBody>
             {users?.map((u) => {
-              const isAdmin = u.user_roles?.some((r: any) => r.role === "admin");
-              const isSelf = false; // Simplified check for now
+              const userRoles = u.user_roles as any[];
+              const isAdmin = userRoles?.some((r: any) => r.role === "admin");
               
               return (
                 <TableRow key={u.id}>
@@ -119,12 +120,12 @@ function AdminUsersPage() {
                     <div className="text-xs text-muted-foreground">ID: {u.id.slice(0, 8)}</div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={u.status === "active" ? "success" : "secondary"}>
+                    <Badge variant={u.status === "active" ? "default" : "secondary"}>
                       {u.status === "active" ? "Ativo" : "Inativo"}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={isAdmin ? "default" : "outline"}>
+                    <Badge variant={isAdmin ? "destructive" : "outline"}>
                       {isAdmin ? "Administrador" : "Usuário"}
                     </Badge>
                   </TableCell>
