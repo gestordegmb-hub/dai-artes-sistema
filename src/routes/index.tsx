@@ -23,6 +23,9 @@ function RootIndex() {
           <br />
           <br />
           usuarios desativados são excluidos automaticamente do acesso e da memoria de conta do sistema
+          <br />
+          <br />
+          todo novo usuario deve ter o acesso permitido pelo admin. caso ao contrario, não tera acesso no sistema.
         </p>
       </div>
     </div>
