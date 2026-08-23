@@ -44,6 +44,9 @@ function RootIndex() {
           <br />
           <br />
           Criar uma página de perfil para eu alterar meus dados e trocar minha senha.
+          <br />
+          <br />
+          Load the security issues from the scan results and fix the selected issues.
         </p>
       </div>
     </div>
