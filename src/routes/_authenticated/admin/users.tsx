@@ -24,16 +24,24 @@ function AdminUsersPage() {
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
-      const { data: profiles, error } = await supabase
+      // Manual join because PostgREST might not infer the relation automatically in types
+      const { data: profiles, error: pError } = await supabase
         .from("profiles")
-        .select(`
-          *,
-          user_roles(role)
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
         
-      if (error) throw error;
-      return profiles as any[];
+      if (pError) throw pError;
+
+      const { data: roles, error: rError } = await supabase
+        .from("user_roles")
+        .select("user_id, role");
+        
+      if (rError) throw rError;
+
+      return profiles.map(p => ({
+        ...p,
+        roles: roles.filter(r => r.user_id === p.id).map(r => r.role)
+      }));
     }
   });
 
@@ -57,7 +65,6 @@ function AdminUsersPage() {
   const toggleRole = useMutation({
     mutationFn: async ({ id, isAdmin }: { id: string, isAdmin: boolean }) => {
       if (isAdmin) {
-        // Demote to user
         const { error } = await supabase
           .from("user_roles")
           .delete()
@@ -65,7 +72,6 @@ function AdminUsersPage() {
           .eq("role", "admin");
         if (error) throw error;
       } else {
-        // Promote to admin
         const { error } = await supabase
           .from("user_roles")
           .insert({ user_id: id, role: "admin" });
@@ -79,7 +85,7 @@ function AdminUsersPage() {
     onError: (err: any) => toast.error(err.message)
   });
 
-  const sendRecovery = async (email: string) => {
+  const sendRecovery = async (email: string | null) => {
     if (!email) return;
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth?mode=reset`,
@@ -92,66 +98,69 @@ function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-3xl">Administração de Usuários</h1>
+      <div className="flex flex-col gap-1">
+        <h1 className="font-display text-3xl text-foreground">Administração de Usuários</h1>
         <p className="text-sm text-muted-foreground">Gerencie o acesso e permissões dos usuários do sistema.</p>
       </div>
 
-      <div className="card-elevated overflow-hidden">
+      <div className="card-elevated overflow-hidden border border-sidebar-border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-sidebar/50">
             <TableRow>
-              <TableHead>Usuário</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Privilégios</TableHead>
-              <TableHead>Último Acesso</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+              <TableHead className="font-semibold">Usuário</TableHead>
+              <TableHead className="font-semibold text-center">Status</TableHead>
+              <TableHead className="font-semibold text-center">Privilégios</TableHead>
+              <TableHead className="font-semibold">Último Acesso</TableHead>
+              <TableHead className="text-right font-semibold">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users?.map((u) => {
-              const userRoles = u.user_roles as any[];
-              const isAdmin = userRoles?.some((r: any) => r.role === "admin");
+              const isAdmin = u.roles.includes("admin");
               
               return (
-                <TableRow key={u.id}>
+                <TableRow key={u.id} className="hover:bg-sidebar/20">
                   <TableCell>
-                    <div className="font-medium">{u.email}</div>
-                    <div className="text-xs text-muted-foreground">ID: {u.id.slice(0, 8)}</div>
+                    <div className="font-medium text-foreground">{u.email}</div>
+                    <div className="text-[10px] text-muted-foreground font-mono uppercase tracking-tighter">ID: {u.id.slice(0, 8)}</div>
                   </TableCell>
-                  <TableCell>
-                    <Badge variant={u.status === "active" ? "default" : "secondary"}>
+                  <TableCell className="text-center">
+                    <Badge variant={u.status === "active" ? "default" : "secondary"} className="font-normal px-2.5">
                       {u.status === "active" ? "Ativo" : "Inativo"}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <Badge variant={isAdmin ? "destructive" : "outline"}>
+                  <TableCell className="text-center">
+                    <Badge variant={isAdmin ? "destructive" : "outline"} className="font-normal px-2.5">
                       {isAdmin ? "Administrador" : "Usuário"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="text-sm text-muted-foreground">
                     {u.last_login_at ? new Date(u.last_login_at).toLocaleString('pt-BR') : "Nunca"}
                   </TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button variant="outline" size="icon" title="Enviar recuperação de senha" onClick={() => sendRecovery(u.email)}>
-                      <Mail className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      title={isAdmin ? "Remover admin" : "Tornar admin"}
-                      onClick={() => toggleRole.mutate({ id: u.id, isAdmin })}
-                    >
-                      {isAdmin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      title={u.status === "active" ? "Desativar" : "Ativar"}
-                      onClick={() => toggleStatus.mutate({ id: u.id, status: u.status })}
-                    >
-                      {u.status === "active" ? <UserMinus className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
-                    </Button>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" size="icon" className="h-8 w-8 text-primary border-primary/20 hover:bg-primary/5" title="Enviar recuperação de senha" onClick={() => sendRecovery(u.email)}>
+                        <Mail className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className={`h-8 w-8 ${isAdmin ? 'text-destructive border-destructive/20 hover:bg-destructive/5' : 'text-foreground'}`}
+                        title={isAdmin ? "Remover admin" : "Tornar admin"}
+                        onClick={() => toggleRole.mutate({ id: u.id, isAdmin })}
+                      >
+                        {isAdmin ? <ShieldOff className="h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5" />}
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        title={u.status === "active" ? "Desativar" : "Ativar"}
+                        onClick={() => toggleStatus.mutate({ id: u.id, status: u.status })}
+                      >
+                        {u.status === "active" ? <UserMinus className="h-3.5 w-3.5 text-muted-foreground" /> : <UserPlus className="h-3.5 w-3.5 text-primary" />}
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );
