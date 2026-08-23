@@ -50,6 +50,9 @@ function RootIndex() {
           <br />
           <br />
           Auditoria de segurança concluída: privilégios de execução restritos para funções sensíveis.
+          <br />
+          <br />
+          status de acesso do usuario em tempo real, se estiver online, o ultimo acesso tem que mostrar, se esteve online nas ultimas horas, minutos, segundos e dias
         </p>
       </div>
     </div>
