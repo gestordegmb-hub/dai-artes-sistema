@@ -14,21 +14,44 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot" | "reset">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get("mode") === "reset" || window.location.hash.includes("type=recovery")) {
+      setMode("reset");
+    }
+  }, []);
+
   useEffect(() => { 
-    document.title = mode === "forgot" ? "Recuperar Senha — Dai Artes" : "Entrar — Dai Artes"; 
+    const titles = {
+      signin: "Entrar — Dai Artes",
+      signup: "Criar conta — Dai Artes",
+      forgot: "Recuperar Senha — Dai Artes",
+      reset: "Definir Nova Senha — Dai Artes"
+    };
+    document.title = titles[mode]; 
   }, [mode]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "forgot") {
+      if (mode === "reset") {
+        if (password !== confirmPassword) {
+          throw new Error("As senhas não coincidem.");
+        }
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) throw error;
+        toast.success("Senha alterada com sucesso! Agora você pode entrar.");
+        setMode("signin");
+        navigate({ to: "/auth", replace: true });
+      } else if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/auth?mode=reset`,
         });
@@ -55,6 +78,7 @@ function AuthPage() {
       setLoading(false);
     }
   }
+
 
 
   return (
