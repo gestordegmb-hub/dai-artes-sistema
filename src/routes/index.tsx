@@ -41,6 +41,9 @@ function RootIndex() {
           <br />
           <br />
           todos os usuarios inativos devem ser excluido da tela de administração de usuarios
+          <br />
+          <br />
+          Criar uma página de perfil para eu alterar meus dados e trocar minha senha.
         </p>
       </div>
     </div>
