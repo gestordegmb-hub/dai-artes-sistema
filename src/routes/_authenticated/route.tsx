@@ -8,12 +8,37 @@ import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
-    return { user: data.user };
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) throw redirect({ to: "/auth" });
+    
+    // Check if user is active
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("status")
+      .eq("id", user.id)
+      .single();
+      
+    if (profile?.status === 'inactive') {
+      await supabase.auth.signOut();
+      throw redirect({ to: "/auth" });
+    }
+
+    // Check role
+    const { data: userRole } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .single();
+
+    return { 
+      user, 
+      role: userRole?.role || 'user',
+      isAdmin: userRole?.role === 'admin'
+    };
   },
   component: Shell,
 });
+
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
