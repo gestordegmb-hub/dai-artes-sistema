@@ -39,8 +39,32 @@ function SettingsPage() {
       toast.success("Configurações salvas!");
       qc.invalidateQueries({ queryKey: ["settings"] });
     } catch (err: any) { toast.error(err.message); }
-    finally { setSaving(false); }
+  async function changePassword() {
+    if (newPassword !== confirmPassword) {
+      toast.error("As senhas não coincidem.");
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error("A nova senha deve ter pelo menos 8 caracteres.");
+      return;
+    }
+
+    setUpdatingPassword(true);
+    try {
+      // Supabase auth.updateUser handles password change
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast.success("Senha atualizada com sucesso!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao atualizar senha.");
+    } finally {
+      setUpdatingPassword(false);
+    }
   }
+
 
   const Field = ({ label, k, type = "text", full = false, textarea = false }: any) => (
     <div className={full ? "col-span-2" : ""}>
