@@ -51,7 +51,9 @@ const NAV = [
 
 const ADMIN_NAV = [
   { to: "/admin/users", label: "Usuários", icon: Users },
+  { to: "/admin/audit", label: "Auditoria", icon: History },
 ] as const;
+
 
 function Shell() {
   const { user, isAdmin } = Route.useRouteContext();
