@@ -29,6 +29,9 @@ function RootIndex() {
           <br />
           <br />
           Adicionar uma fila de aprovação para novos usuários no painel administrativo, para liberar o acesso apenas após validação.
+          <br />
+          <br />
+          Adicionar uma tela no admin para aprovar, rejeitar e desativar usuários, exibindo claramente o status de cada conta.
         </p>
       </div>
     </div>
