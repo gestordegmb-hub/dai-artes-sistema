@@ -14,25 +14,28 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const preview = false;
 
-  useEffect(() => { document.title = "Entrar — Dai Artes"; }, []);
-
-  async function enterDemo() {
-    // Demo disabled
-  }
-
+  useEffect(() => { 
+    document.title = mode === "forgot" ? "Recuperar Senha — Dai Artes" : "Entrar — Dai Artes"; 
+  }, [mode]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "signup") {
+      if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth?mode=reset`,
+        });
+        if (error) throw error;
+        toast.success("Link de recuperação enviado para o seu e-mail!");
+        setMode("signin");
+      } else if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email, password,
           options: { emailRedirectTo: `${window.location.origin}/dashboard` },
@@ -52,6 +55,7 @@ function AuthPage() {
       setLoading(false);
     }
   }
+
 
   return (
     <div className="min-h-screen grid md:grid-cols-2">
