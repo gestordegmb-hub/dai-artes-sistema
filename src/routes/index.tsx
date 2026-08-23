@@ -35,6 +35,9 @@ function RootIndex() {
           <br />
           <br />
           Adicionar busca instantânea e filtros por status e data na lista de usuários do painel administrativo.
+          <br />
+          <br />
+          Implemente paginação na lista de usuários do painel administrativo para melhorar a performance e a navegação.
         </p>
       </div>
     </div>
