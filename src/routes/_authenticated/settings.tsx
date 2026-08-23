@@ -38,7 +38,13 @@ function SettingsPage() {
       if (error) throw error;
       toast.success("Configurações salvas!");
       qc.invalidateQueries({ queryKey: ["settings"] });
-    } catch (err: any) { toast.error(err.message); }
+    } catch (err: any) { 
+      toast.error(err.message); 
+    } finally { 
+      setSaving(false); 
+    }
+  }
+
   async function changePassword() {
     if (newPassword !== confirmPassword) {
       toast.error("As senhas não coincidem.");
@@ -51,7 +57,6 @@ function SettingsPage() {
 
     setUpdatingPassword(true);
     try {
-      // Supabase auth.updateUser handles password change
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
       toast.success("Senha atualizada com sucesso!");
@@ -64,6 +69,7 @@ function SettingsPage() {
       setUpdatingPassword(false);
     }
   }
+
 
 
   const Field = ({ label, k, type = "text", full = false, textarea = false }: any) => (
