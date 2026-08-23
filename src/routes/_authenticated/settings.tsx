@@ -124,10 +124,33 @@ function SettingsPage() {
         Dica: use <code className="text-primary">{"{cliente}"}</code> e <code className="text-primary">{"{empresa}"}</code> na mensagem padrão do WhatsApp.
       </p>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end border-b pb-6">
         <button onClick={save} disabled={saving} className="h-11 px-6 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 disabled:opacity-60 shadow-[var(--shadow-soft)]">
           {saving ? "Salvando…" : "Salvar configurações"}
         </button>
+      </div>
+
+      <div className="pt-6">
+        <h2 className="font-display text-2xl">Segurança</h2>
+        <p className="text-sm text-muted-foreground">Alterar sua senha de acesso.</p>
+        
+        <div className="mt-4 card-elevated p-6 space-y-4 max-w-md">
+          <div>
+            <label className="text-sm font-medium">Nova Senha</label>
+            <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
+              className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm" />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Confirmar Nova Senha</label>
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+              className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm" />
+          </div>
+          
+          <button onClick={changePassword} disabled={updatingPassword}
+            className="w-full h-11 rounded-md bg-secondary text-secondary-foreground text-sm font-medium hover:opacity-90 disabled:opacity-60">
+            {updatingPassword ? "Atualizando…" : "Alterar senha"}
+          </button>
+        </div>
       </div>
     </div>
   );
