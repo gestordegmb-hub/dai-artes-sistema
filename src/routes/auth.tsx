@@ -105,44 +105,62 @@ function AuthPage() {
             <img src={logoAsset.url} alt="Dai Artes" className="h-8 w-8 object-contain rounded-md bg-white p-0.5 border border-primary/10" /><span className="font-semibold">DAI ARTES</span>
           </div>
           <h2 className="font-display text-3xl text-foreground">
-            {mode === "signin" ? "Entrar" : mode === "signup" ? "Criar conta" : "Recuperar senha"}
+            {mode === "signin" ? "Entrar" : mode === "signup" ? "Criar conta" : mode === "forgot" ? "Recuperar senha" : "Nova senha"}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "signin" 
               ? "Acesse sua conta para gerenciar orçamentos." 
               : mode === "signup"
                 ? "Comece a organizar seus orçamentos agora."
-                : "Informe seu e-mail para receber o link de recuperação."}
+                : mode === "forgot"
+                  ? "Informe seu e-mail para receber o link de recuperação."
+                  : "Defina sua nova senha de acesso."}
           </p>
 
           <form onSubmit={submit} className="mt-8 space-y-4">
-            <div>
-              <label className="text-sm font-medium">E-mail</label>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
-            </div>
-            {mode !== "forgot" && (
+            {mode !== "reset" && (
               <div>
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Senha</label>
-                  {mode === "signin" && (
-                    <button type="button" onClick={() => setMode("forgot")} className="text-xs text-primary hover:underline">
-                      Esqueceu a senha?
-                    </button>
-                  )}
-                </div>
-                <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
+                <label className="text-sm font-medium">E-mail</label>
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                   className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
               </div>
             )}
+            
+            {mode !== "forgot" && (
+              <>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">{mode === "reset" ? "Nova Senha" : "Senha"}</label>
+                    {mode === "signin" && (
+                      <button type="button" onClick={() => setMode("forgot")} className="text-xs text-primary hover:underline">
+                        Esqueceu a senha?
+                      </button>
+                    )}
+                  </div>
+                  <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
+                    className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+                </div>
+                
+                {mode === "reset" && (
+                  <div>
+                    <label className="text-sm font-medium">Confirmar Nova Senha</label>
+                    <input type="password" required minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="mt-1 w-full h-11 rounded-md border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+                  </div>
+                )}
+              </>
+            )}
+            
             <button type="submit" disabled={loading}
               className="w-full h-11 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 disabled:opacity-60 shadow-[var(--shadow-soft)]">
-              {loading ? "Aguarde…" : mode === "signin" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link"}
+              {loading ? "Aguarde…" : mode === "signin" ? "Entrar" : mode === "signup" ? "Criar conta" : mode === "forgot" ? "Enviar link" : "Salvar Senha"}
             </button>
           </form>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            {mode === "signin" ? (
+            {mode === "reset" ? (
+              <button className="text-primary font-medium hover:underline" onClick={() => setMode("signin")}>Voltar para o login</button>
+            ) : mode === "signin" ? (
               <>Ainda não tem conta?{" "}
                 <button className="text-primary font-medium hover:underline" onClick={() => setMode("signup")}>Criar conta</button>
               </>
@@ -152,6 +170,7 @@ function AuthPage() {
               </>
             )}
           </div>
+
 
 
         </div>
