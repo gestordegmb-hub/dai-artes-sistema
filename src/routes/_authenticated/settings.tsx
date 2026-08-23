@@ -18,6 +18,13 @@ function SettingsPage() {
   const qc = useQueryClient();
   const [form, setForm] = useState<any>(s || {});
   const [saving, setSaving] = useState(false);
+  
+  // Security form
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+
 
   useEffect(() => { if (s) setForm(s); }, [s]);
 
