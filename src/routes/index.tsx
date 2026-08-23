@@ -26,6 +26,9 @@ function RootIndex() {
           <br />
           <br />
           todo novo usuario deve ter o acesso permitido pelo admin. caso ao contrario, não tera acesso no sistema.
+          <br />
+          <br />
+          Adicionar uma fila de aprovação para novos usuários no painel administrativo, para liberar o acesso apenas após validação.
         </p>
       </div>
     </div>
