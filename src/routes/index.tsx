@@ -20,6 +20,9 @@ function RootIndex() {
           pablooliveirasantos184@gmail.com
           <br />
           adiciona essa conta como administrador para ter acesso a area de admin do sistema
+          <br />
+          <br />
+          usuarios desativados são excluidos automaticamente do acesso e da memoria de conta do sistema
         </p>
       </div>
     </div>
