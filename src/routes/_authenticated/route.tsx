@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect, Link, useRouter, useRouterState } fr
 import { supabase } from "@/integrations/supabase/client";
 import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Plus, Menu, History } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
+import { DaiArtesLogo } from "@/components/DaiArtesLogo";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -72,8 +72,8 @@ function Shell() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-sidebar border-r border-sidebar-border">
       <div className="h-16 flex items-center gap-2 px-5 border-b border-sidebar-border">
-        <div className="h-9 w-9 rounded-lg grid place-items-center bg-white p-1 shadow-sm border">
-          <img src={logoAsset.url} alt="Dai Artes" className="h-full w-full object-contain" />
+        <div className="h-9 w-9 rounded-lg grid place-items-center bg-white p-1 shadow-sm border overflow-hidden">
+          <DaiArtesLogo className="h-full w-full" />
         </div>
         <div>
           <div className="font-display text-lg leading-none text-sidebar-foreground">Dai Artes</div>
@@ -161,8 +161,8 @@ function Shell() {
                 <SidebarContent />
               </SheetContent>
             </Sheet>
-            <div className="h-8 w-8 rounded bg-white p-0.5 shadow-sm border">
-               <img src={logoAsset.url} alt="Dai Artes" className="h-full w-full object-contain" />
+            <div className="h-8 w-8 rounded bg-white p-0.5 shadow-sm border overflow-hidden">
+               <DaiArtesLogo className="h-full w-full" />
             </div>
             <div className="font-display text-lg text-primary">Dai Artes</div>
           </div>

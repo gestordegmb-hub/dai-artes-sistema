@@ -7,7 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { budgetDetailQuery, settingsQuery } from "@/lib/queries";
 import { currency, formatDate, formatPhone } from "@/lib/format";
 import { buildWhatsAppMessage, whatsappLink } from "@/lib/whatsapp";
-import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
+import { DaiArtesLogo } from "@/components/DaiArtesLogo";
+import { getBase64ImageFromUrl } from "@/lib/assets";
 
 export const Route = createFileRoute("/_authenticated/budgets/$id")({
   loader: ({ context, params }) => Promise.all([
@@ -30,6 +31,13 @@ function BudgetDetail() {
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const cancelledRef = useRef(false);
+  const [base64Logo, setBase64Logo] = useState<string | null>(null);
+
+  // Pre-load logo as base64 for PDF reliability
+  useEffect(() => {
+    const logoUrl = settings?.logo_url || "/images/logo-dai-artes.png";
+    getBase64ImageFromUrl(logoUrl).then(setBase64Logo).catch(console.error);
+  }, [settings?.logo_url]);
 
   useEffect(() => {
     return () => {
@@ -196,15 +204,24 @@ function BudgetDetail() {
           {/* HEADER BAND */}
           <div className="pdf-band px-12 py-8 flex items-start justify-between relative">
             <div className="flex items-center gap-4">
-              {settings?.logo_url ? (
-                <div className="h-20 w-20 rounded-2xl bg-white p-2 shadow-lg flex items-center justify-center">
-                  <img src={settings.logo_url} alt={settings?.company_name || "Logo"} crossOrigin="anonymous" className="max-h-full max-w-full object-contain block" />
-                </div>
-              ) : (
-                <div className="h-20 w-20 rounded-2xl bg-white p-2 shadow-lg flex items-center justify-center">
-                  <img src={logoAsset.url} alt={settings?.company_name || "Logo"} crossOrigin="anonymous" className="max-h-full max-w-full object-contain block" />
-                </div>
-              )}
+              <div className="h-20 w-20 rounded-2xl bg-white p-2 shadow-lg flex items-center justify-center overflow-hidden">
+                {base64Logo ? (
+                  <img 
+                    src={base64Logo} 
+                    alt={settings?.company_name || "Logo"} 
+                    className="max-h-full max-w-full object-contain block" 
+                  />
+                ) : settings?.logo_url ? (
+                  <img 
+                    src={settings.logo_url} 
+                    alt={settings?.company_name || "Logo"} 
+                    crossOrigin="anonymous" 
+                    className="max-h-full max-w-full object-contain block" 
+                  />
+                ) : (
+                  <DaiArtesLogo className="h-full w-full" />
+                )}
+              </div>
               <div>
                 <div className="font-display text-4xl leading-tight tracking-tight">{settings?.company_name || "Dai Artes"}</div>
                 <div className="text-[11px] uppercase tracking-[0.3em] text-white/80 mt-1">Papelaria personalizada</div>
