@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect, Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Plus, Menu } from "lucide-react";
+import { LayoutDashboard, FileText, Users, Package, Settings, LogOut, Plus, Menu, History } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import logoAsset from "@/assets/logo-dai-artes.png.asset.json";
 import { useState } from "react";
